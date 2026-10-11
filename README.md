@@ -1,22 +1,42 @@
 # ssrf-lab
 
-A local attack range and a conformance checker for SSRF defenses in HTTP clients.
+**A failed HTTP request is not proof that your SSRF defense worked.**
+
+`ssrf-lab` is a local attack range and conformance checker for Node.js HTTP
+clients. It distinguishes an explicit security refusal from a request that
+failed for an unrelated reason, using a canary and an independent hit counter.
+If the internal service saw the request, a later error cannot make it `BLOCKED`.
 
 ![ci](https://github.com/roshan-amble/ssrf-lab/actions/workflows/ci.yml/badge.svg)
+
+**10 main SSRF/fetch-safety probes · 7 separate direct-address cases · MIT · Node.js 22+**
+
+Start with the direct-address comparison: the same local target, three packages
+that advertise SSRF protection. No accounts, API keys, or external targets are
+needed for this suite.
+
+```bash
+git clone https://github.com/roshan-amble/ssrf-lab.git
+cd ssrf-lab
+npm ci
+npm run build
+node dist/cli.js scan --client libs --suite direct
+```
+
+The direct suite targets the lab's internal service using local address forms.
+Use an authorized disposable environment; `0.0.0.0` and IPv4-mapped IPv6 behavior
+can vary by operating system. The **full redirect suite also attempts non-loopback
+addresses**. Run it only with network isolation, as described below.
+
+[Read the published package finding](docs/findings/2026-09-13-ssrf-agent-bypass.md)
+· [Verify a release and inspect real CI output](docs/RELEASE_VERIFICATION.md)
+
+## What it is
 
 Most SSRF material shows 1 payload against 1 endpoint. Production is harder in a
 different way: a fetcher has several controls, and a log cannot tell you whether
 a request was **refused by a control** or simply **failed on its own**. Those
 look identical until the day the network changes and the attack lands.
-
-`ssrf-lab` starts a small hostile range on loopback, drives any HTTP client
-through 10 attacks, and reports which ones a control actually stopped.
-
-```bash
-npm run scan -- scan --client all
-```
-
-## What it is
 
 ```
         your client under test
@@ -30,9 +50,9 @@ npm run scan -- scan --client all
    │                          │        └───────────────────────────┘
    │  redirects: loopback,    │
    │  decimal-IP, metadata,   │        ┌───────────────────────────┐
-   │  private, credentials,   │ ─────▶ │  169.254.169.254          │
+   │  reserved, credentials,  │ ─────▶ │  169.254.169.254          │
    │  endless loop            │        │  198.51.100.1             │
-   │  payloads: gzip bomb,    │        │  (never answer)           │
+   │  payloads: gzip bomb,    │        │  block external egress!  │
    │  endless body, 1 B/s     │        └───────────────────────────┘
    └──────────────────────────┘
 ```
@@ -43,16 +63,43 @@ arrives at the internal service arrived by attack.
 
 ## Quick start
 
+After the clean install and build above, these are the compiled CLI commands:
+
 ```bash
-git clone https://github.com/roshan-amble/ssrf-lab
-cd ssrf-lab
-npm install
-npm run scan -- scan --client all
+# Local direct-address comparison (the introductory demo)
+node dist/cli.js scan --client libs --suite direct
+
+# Machine-readable results from the same suite
+node dist/cli.js scan --client libs --suite direct --json
+
+# In a network-isolated environment only: all 10 main probes, 3 built-in clients
+node dist/cli.js scan --client all
+
+# In a network-isolated environment only: both suites, nonzero exit on REACHED
+node dist/cli.js scan --client guarded --suite all --fail-on-reach
 ```
+
+`--fail-on-reach` exits 1 for an observed `REACHED`. It does not require every
+other result to be `BLOCKED` and is not a security certification.
+
+For the full tests and redirect scans, CI uses a fresh Linux network namespace
+with only loopback enabled. This prevents deliberately unsafe clients from
+contacting real metadata services or other networks. See
+[release verification](docs/RELEASE_VERIFICATION.md) and the
+[workflow](.github/workflows/ci.yml) for the exact commands and saved logs.
+The clone-based instructions do not assume this package is published on npm.
 
 ## Measured output
 
-This is a real run, not an illustration. CI re-runs it on every push.
+The transcript below is a **historical run**, retained for explanation, not a
+fresh result for each commit. The updated CI records the actual environment,
+tests, compiled CLI results, and a failing-client negative control as downloadable
+artifacts. Use those per-commit artifacts when reporting release results.
+
+Network failures and deadlines vary by environment. For example, an isolated
+rebinding probe can produce `PREVENTED` instead of the historical deadline
+`BLOCKED`. The old transcript also calls TEST-NET-2 a "private range"; the current
+probe labels it correctly as reserved documentation space.
 
 ```
 [+] BLOCKED    the client refused, and named the control that refused
@@ -109,8 +156,9 @@ guarded client (this repo)
 
 ## Findings
 
-The direct suite sends 1 request to a loopback service, written 7 ways, through
-npm packages whose stated purpose is to stop SSRF.
+The direct suite sends a request to a loopback service using 7 address forms,
+through npm packages whose stated purpose is to stop SSRF. These are the
+published finding's measured results, with exact versions:
 
 | Package | Version | Result |
 | --- | --- | --- |
@@ -119,25 +167,26 @@ npm packages whose stated purpose is to stop SSRF.
 | [ssrf-agent](https://www.npmjs.com/package/ssrf-agent) | 1.0.5 | **5 of 7.** `0.0.0.0` and `[::ffff:127.0.0.1]` reached the internal service |
 
 ```bash
-npm run scan -- scan --client libs --suite direct
+node dist/cli.js scan --client libs --suite direct
 ```
 
-Details, root cause and a suggested fix:
+Details, root cause, suggested fix, and disclosure timeline:
 [docs/findings/2026-09-13-ssrf-agent-bypass.md](docs/findings/2026-09-13-ssrf-agent-bypass.md).
+The CVE request remains a request unless and until an assignment is confirmed.
 
 ## The verdicts, and why there are 5
 
 | Verdict | Meaning |
 | --- | --- |
-| `BLOCKED` | The client refused, and named the control. This is the only verdict you can rely on. |
-| `PREVENTED` | The attack never arrived, but no control was named. Measured with the internal service's hit counter, not guessed from an error. |
-| `REACHED` | The client arrived at the internal service, or it never stopped reading. |
-| `LUCKY` | Nothing refused it. The request failed for a reason outside the client. The same attack on a live network can land. |
-| `N/A` | The client has no hook the probe needs, which is itself a finding. |
+| `BLOCKED` | The client named a refusing control, with no contradictory measured internal hit. Evidence for this probe, not proof of complete SSRF protection. |
+| `PREVENTED` | No internal request was observed during the probe, but no control was named. Measured with the internal service's hit counter, not inferred solely from an error. |
+| `REACHED` | An internal request was observed, the response proved reach, or a fetch-safety limit was exceeded. A later refusal does not erase a measured hit. |
+| `LUCKY` | No refusing control or observed successful prevention was established. A network failure alone is not evidence of a security boundary. |
+| `N/A` | This adapter exposes no hook the probe needs. It does not establish whether the underlying client has its own equivalent protection. |
 
-`LUCKY` is the reason this tool exists. In the run above, built-in `fetch` looks
-safe against the cloud-metadata redirect. It is not: no control refused it, and
-the address simply does not answer on a laptop. On an EC2 instance it answers.
+`LUCKY` is the reason this tool exists. A metadata redirect that fails on a
+network without a reachable metadata endpoint is not evidence that the client
+blocks that destination. Reachability and provider-side requirements vary.
 
 ## The probes
 
@@ -147,12 +196,15 @@ the address simply does not answer on a laptop. On an EC2 instance it answers.
 | Redirect into loopback, as a decimal | `302` to `http://2130706433:PORT/` | Classify the parsed host, never the raw string |
 | Redirect that carries credentials | `302` to `http://user:pass@127.0.0.1/` | Refuse the address, and never echo the credentials |
 | Redirect into cloud metadata | `302` to `169.254.169.254` | Refuse link-local addresses |
-| Redirect into a private range | `302` to `198.51.100.1` | Refuse private and reserved ranges |
+| Redirect into TEST-NET-2 | `302` to `198.51.100.1` | Refuse reserved documentation addresses; this is not an RFC 1918 test |
 | Endless redirect chain | `302` to itself | Cap the number of hops |
 | Decompression bomb | 64 KiB on the wire, 64 MiB expanded | Count bytes after decompression, while reading |
 | Body with no end and no length | chunked, never finishes | Cap received bytes with a running total |
 | One byte per second | a response that stays open for hours | One deadline over the whole request |
 | DNS rebinding (simulated) | first answer public, every later answer loopback | Judge the address the socket uses |
+
+The separate direct suite exercises 7 local address forms. These are not 17
+independent security guarantees; several cases test related behavior.
 
 ## The 4 controls in the guarded client
 
@@ -170,13 +222,17 @@ if ((bytes += chunk.length) > maxBytes) throw new PolicyRefusal('body-too-large'
 const deadline = AbortSignal.timeout(timeoutMs)
 ```
 
-Control 4 is the one that is usually wrong. A socket timeout is not a deadline:
-the 1-byte-per-second target keeps the socket busy for ever and never trips it.
+A socket inactivity timeout is not a whole-request deadline: a slow target can
+keep the socket active without finishing the response.
 
 ## Use it on your own client
 
+After building this repository, import `./dist/index.js` from an example file at
+the repository root. The adapter shape is illustrated below; replace its `fetch`
+body with your own client's implementation.
+
 ```ts
-import { startAttackRange, runScan, renderTable } from 'ssrf-lab'
+import { startAttackRange, runScan, renderTable } from './dist/index.js'
 
 const range = await startAttackRange()
 
@@ -188,44 +244,55 @@ const myClient = {
   },
 }
 
-console.log(renderTable(await runScan(myClient, range)))
-await range.close()
+try {
+  // Full scan: use a network-isolated environment.
+  console.log(renderTable(await runScan(myClient, range)))
+} finally {
+  await range.close()
+}
 ```
 
 Throw `PolicyRefusal(reason, detail)` from your adapter when your client refuses
-on purpose. That is how the checker tells a control from a failure.
+on purpose. The checker gives the internal hit counter priority over that claim.
+Finish or cancel the adapter's network work before settling `fetch`, and do not
+share a range between concurrent scans. The counter measures sequential probes;
+it is not a per-request correlation system.
 
 ## What this does NOT prove
 
 - **The rebinding probe is simulated.** It swaps answers inside the process with
-  an injected resolver. It proves whether a client judges the address it
-  connects to. It proves nothing about a real recursive resolver or TTL 0.
-- **Everything is loopback and plain HTTP.** There is no TLS in the range, so
-  scheme-downgrade behaviour on a `https` → `http` redirect is untested.
+  an injected resolver. It tests which address a client connects to, not a real
+  recursive resolver, DNS cache, or TTL policy.
+- **The listeners are loopback; not every destination is.** Unsafe clients can
+  attempt metadata, documentation, and simulated-public addresses. The range
+  uses plain HTTP, so TLS and `https` to `http` downgrade behavior are untested.
 - **`trustedOrigin` is a lab affordance.** The range lives on loopback, so the
   entry origin is exempt from the address rules. Without it a guard refuses the
   range itself and every probe passes while testing nothing. No production
-  fetcher should have such an option.
-- **A green scan is not a safe client.** These are 10 attacks, not the class.
+  fetcher should use this exception for untrusted requests.
+- **A green scan is not a safe client.** These are bounded tests, not the entire
+  class of SSRF attacks, and a deadline can stop a probe without proving address
+  validation is correct.
 
 ## Design notes
 
 - **Two servers.** The public range stands for the internet and may be fetched.
   The internal service may not. A hit on the internal service is therefore
-  always an attack that landed.
-- **A canary and a counter.** The body carries a canary so a hit is provable,
-  and the internal service counts requests so a MISS is provable too. Watching
-  only for errors cannot distinguish a control from an accident.
+  always an attack that landed within the isolated, sequential test.
+- **A canary and a counter.** The body can prove a hit, while the internal service
+  independently counts requests. That catches a hit even if the client drops
+  the body or throws afterward. Watching only errors cannot do that.
 - **`198.51.100.1`, not `10.0.0.1`.** An early version used `10.0.0.1` and a
   probe reached a real device on the author's own network. The range now points
-  at TEST-NET-2, which is reserved for documentation.
+  at TEST-NET-2, reserved for documentation. This choice is not a substitute for
+  network isolation.
 
 ## Roadmap
 
 - A real DNS server in the range, so rebinding is measured rather than simulated
 - TLS on the range, for scheme-downgrade probes
 - Adapters for `axios`, `got` and `undici` with explicit agents
-- IPv6 targets, including `::ffff:127.0.0.1`
+- Native IPv6 targets beyond the direct suite's IPv4-mapped IPv6 case
 
 ## License
 

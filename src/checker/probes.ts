@@ -32,11 +32,11 @@ const gotSecret = (outcome: FetchOutcome): boolean =>
   outcome.bodySample.includes(CANARY_INTERNAL_SECRET)
 
 /**
- * Spellings of 127.0.0.1 that a URL parser accepts.
+ * Address spellings that can reach the local internal service.
  *
- * A filter that compares text sees 6 different hosts here. A filter that
- * classifies the PARSED address sees one. These probes need no redirect, so
- * they also work against libraries that refuse loopback at the first hop.
+ * Several normalize to 127.0.0.1; 0.0.0.0 is an unspecified address and
+ * IPv4-mapped IPv6 uses a different address family. These probes need no
+ * redirect, so they also test guards applied at the first hop.
  */
 export const DIRECT_PROBES: readonly Probe[] = [
   directProbe('direct-dotted', 'Plain 127.0.0.1', (port) => `http://127.0.0.1:${port}`),
@@ -113,10 +113,11 @@ export const PROBES: readonly Probe[] = [
     reached: (outcome) => outcome.status > 0,
   },
   {
+    // Keep the ID stable for consumers of existing JSON reports.
     id: 'redirect-private',
-    title: 'Redirect into a private range',
-    attack: '302 to http://10.0.0.1/',
-    control: 'Refuse RFC 1918 addresses.',
+    title: 'Redirect into TEST-NET-2 (reserved)',
+    attack: '302 to http://198.51.100.1/',
+    control: 'Refuse reserved documentation addresses; this is not an RFC 1918 probe.',
     start: (range) => range.url(RANGE_PATHS.redirectPrivate),
     reached: (outcome) => outcome.status > 0,
   },
