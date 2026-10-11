@@ -9,6 +9,7 @@ function resolve(lookup: LookupFunction, all: boolean): Promise<unknown> {
       else done({ address, family })
     })
   })
+}
 
 describe('flipLookup', () => {
   it('invokes the callback after the caller can attach request error handlers', async () => {

@@ -37,6 +37,38 @@ jobs:
       - name: Clean dependency installation
         run: npm ci 2>&1 | tee verification/install.txt
 
+      # Deliberately vulnerable libraries are part of this research fixture.
+      # Report advisories explicitly; functional CI is not a clean-audit claim.
+      - name: Record dependency audit for review
+        run: |
+          set +e
+          npm audit --json > verification/dependency-audit.json
+          status=$?
+          set -e
+          if [ "$status" -gt 1 ]; then
+            cat verification/dependency-audit.json
+            exit "$status"
+          fi
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const report = JSON.parse(readFileSync('verification/dependency-audit.json', 'utf8'));
+          if (report.error || !report.metadata) throw new Error('Dependency audit did not return a valid report');
+          const summary = {
+            vulnerabilities: report.metadata.vulnerabilities,
+            findings: Object.values(report.vulnerabilities ?? {}).map(item => ({
+              name: item.name,
+              severity: item.severity,
+              isDirect: item.isDirect,
+              range: item.range,
+              via: item.via,
+              fixAvailable: item.fixAvailable,
+            })),
+          };
+          const text = JSON.stringify(summary, null, 2);
+          writeFileSync('verification/dependency-summary.json', `${text}\n`);
+          console.log(text);
+          NODE
+
       - name: Typecheck
         run: npm run typecheck 2>&1 | tee verification/typecheck.txt
 
@@ -78,7 +110,7 @@ jobs:
           }
           NODE
           npm ls --depth=0 2>&1 | tee verification/versions.txt
-          echo 'ALL RELEASE CHECKS PASSED' | tee verification/RESULTS.txt
+          echo 'ALL FUNCTIONAL RELEASE CHECKS PASSED; SEE DEPENDENCY AUDIT SEPARATELY' | tee verification/RESULTS.txt
 
       - name: Preserve actual verification output
         if: always()
