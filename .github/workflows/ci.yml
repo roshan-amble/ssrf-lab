@@ -5,10 +5,16 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v5
@@ -18,15 +24,67 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - run: npm ci
+      - name: Record verification environment
+        run: |
+          mkdir -p verification
+          {
+            git rev-parse HEAD
+            node --version
+            npm --version
+            uname -srm
+          } | tee verification/environment.txt
+
+      - name: Clean dependency installation
+        run: npm ci 2>&1 | tee verification/install.txt
 
       - name: Typecheck
-        run: npm run typecheck
+        run: npm run typecheck 2>&1 | tee verification/typecheck.txt
 
-      - name: Unit and integration tests
-        run: npm test
+      - name: Build the distributed CLI
+        run: npm run build 2>&1 | tee verification/build.txt
 
-      # The repository claims the guarded client stops every attack in the
-      # range. This step fails the build the day that stops being true.
-      - name: The guarded client must reach nothing
-        run: npm run scan -- scan --client guarded --fail-on-reach
+      # The lab's listeners are local, but its deliberately unsafe clients can
+      # follow redirects to metadata/documentation addresses. Permit loopback
+      # only: no external interface, route, metadata service, or real target.
+      - name: Tests and compiled CLI scans in a loopback-only network
+        run: |
+          sudo env "PATH=$PATH" unshare --net -- bash -euo pipefail -c '
+            ip link set lo up
+            ip -brief address | tee verification/network.txt
+            npm test 2>&1 | tee verification/tests.txt
+            node dist/cli.js --help | tee verification/help.txt
+            node dist/cli.js scan --client all --json | tee verification/builtins.json
+            node dist/cli.js scan --client libs --suite direct --json | tee verification/libraries.json
+            node dist/cli.js scan --client guarded --suite all --fail-on-reach --json | tee verification/guarded.json
+            # Check that the CI gate actually fails for an unsafe client.
+            set +e
+            node dist/cli.js scan --client plain --suite direct --fail-on-reach --json > verification/negative-control.json
+            status=$?
+            set -e
+            test "$status" -eq 1
+            printf "Unsafe-client gate returned expected exit status %s\n" "$status" | tee verification/negative-control.txt
+          '
+
+      - name: Render measured scan tables
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          import { LEGEND, renderTable } from './dist/checker/report.js';
+          for (const name of ['builtins', 'libraries', 'guarded']) {
+            const { scans } = JSON.parse(readFileSync(`verification/${name}.json`, 'utf8'));
+            const report = `${LEGEND}\n${scans.map(renderTable).join('\n')}\n`;
+            writeFileSync(`verification/${name}.txt`, report);
+            console.log(report);
+          }
+          NODE
+          npm ls --depth=0 2>&1 | tee verification/versions.txt
+          echo 'ALL RELEASE CHECKS PASSED' | tee verification/RESULTS.txt
+
+      - name: Preserve actual verification output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-verification-${{ github.sha }}
+          path: verification/
+          if-no-files-found: error
+          retention-days: 14

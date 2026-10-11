@@ -55,6 +55,8 @@ export async function runScan(
 async function runProbe(client: HttpClient, range: AttackRange, probe: Probe): Promise<ProbeResult> {
   const started = Date.now()
   const hitsBefore = range.internalHits()
+  const hitInternal = (): boolean =>
+    probe.internalTarget === true && range.internalHits() > hitsBefore
   const missed = (): boolean =>
     probe.internalTarget === true && range.internalHits() === hitsBefore
   const finish = (verdict: Verdict, note: string): ProbeResult => ({
@@ -76,6 +78,11 @@ async function runProbe(client: HttpClient, range: AttackRange, probe: Probe): P
       trustedOrigin: range.origin,
       ...(probe.options?.(range) ?? {}),
     })
+    // SSRF has already happened if the internal service saw the request,
+    // even when an adapter drops the body or omits the canary from its result.
+    if (hitInternal()) {
+      return finish('REACHED', 'the internal service recorded a request, independent of the returned body')
+    }
     if (probe.reached(outcome)) {
       return finish('REACHED', describeReach(outcome.status, outcome.bytesRead, outcome.stoppedByHarness))
     }
@@ -84,6 +91,11 @@ async function runProbe(client: HttpClient, range: AttackRange, probe: Probe): P
     }
     return finish('LUCKY', `no refusal; status ${outcome.status}, ${outcome.bytesRead} bytes`)
   } catch (error) {
+    // A late body cap, timeout, or network error cannot undo an internal hit.
+    // Independent server-side evidence takes priority over a client's claim.
+    if (hitInternal()) {
+      return finish('REACHED', 'the internal service recorded a request before the client reported an error')
+    }
     if (error instanceof PolicyRefusal) {
       return finish('BLOCKED', `${error.reason}: ${error.detail}`)
     }
