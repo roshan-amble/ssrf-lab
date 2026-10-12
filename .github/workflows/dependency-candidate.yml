@@ -1,0 +1,81 @@
+name: dependency-candidate
+
+# Temporary, read-only preparation job. It never pushes code or publishes.
+# Remove this workflow once its generated lockfile has been reviewed and committed.
+on:
+  push:
+    branches: [launch/release-verification]
+    paths: [.github/workflows/dependency-candidate.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Pin the research fixture and update the test runner
+        run: |
+          mkdir -p candidate
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const file = JSON.parse(readFileSync('package.json', 'utf8'));
+          const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
+          const names = ['request-filtering-agent', 'ssrf-agent', 'ssrf-req-filter', 'ip'];
+          const baseline = Object.fromEntries(names.map(name => [name, lock.packages[`node_modules/${name}`]]));
+          writeFileSync('candidate/fixture-baseline.json', JSON.stringify(baseline, null, 2));
+          for (const name of names.slice(0, 3)) file.devDependencies[name] = baseline[name].version;
+          file.engines.node = '>=22.12.0';
+          writeFileSync('package.json', `${JSON.stringify(file, null, 2)}\n`);
+          NODE
+          npm install --save-dev --save-exact vitest@5.0.3
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { deepStrictEqual } from 'node:assert';
+          const before = JSON.parse(readFileSync('candidate/fixture-baseline.json', 'utf8'));
+          const after = JSON.parse(readFileSync('package-lock.json', 'utf8')).packages;
+          for (const [name, old] of Object.entries(before)) {
+            const item = after[`node_modules/${name}`];
+            deepStrictEqual([item.version, item.resolved, item.integrity], [old.version, old.resolved, old.integrity]);
+          }
+          console.log('Research fixture versions, URLs, and integrity hashes unchanged.');
+          NODE
+      - name: Verify clean install and compilation
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+          npm ls --depth=0 | tee candidate/versions.txt
+      - name: Capture the candidate and its audit
+        if: always()
+        run: |
+          cp package.json package-lock.json candidate/
+          git diff -- package.json package-lock.json > candidate/dependencies.patch
+          set +e
+          npm audit --json > candidate/audit.json
+          audit_status=$?
+          set -e
+          printf '%s\n' "$audit_status" > candidate/audit-exit.txt
+          tar --exclude=./.git --exclude=./node_modules --exclude=./dist --exclude=./candidate -czf candidate/source.tgz .
+          {
+            git rev-parse HEAD
+            node --version
+            npm --version
+          } > candidate/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-candidate-${{ github.sha }}
+          path: candidate/
+          retention-days: 7
+          if-no-files-found: error
