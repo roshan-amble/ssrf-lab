@@ -1,90 +1,95 @@
 # Release verification
 
 A prepared script is not a passing test run. The evidence for a release is a
-successful CI run for its exact commit, with the raw output attached.
+successful CI run for its exact commit, with raw output attached.
 
 ## What CI checks
 
-1. A clean `npm ci` using the committed lockfile on Node.js 22.
-2. TypeScript checking and compilation, including the CLI in `dist/`.
-3. Unit and integration tests, including a real internal request followed by a
+1. Clean `npm ci` using the committed lockfile on Node.js 22 and 24.
+2. Seven tests for the audit gate, followed by the actual npm dependency audit.
+   Only the exact [research-fixture exception](DEPENDENCY_POLICY.md) is allowed.
+3. TypeScript checking and compilation, including the CLI in `dist/`.
+4. Unit and integration tests, including a real internal request followed by a
    late policy refusal. A hit must remain `REACHED`, not become `BLOCKED`.
-4. The compiled CLI help and the ten-probe built-in-client comparison.
-5. The seven-case direct-address suite against the three pinned library versions.
-6. Both suites against the guarded client with `--fail-on-reach`.
-7. A negative control: the plain client on the direct suite must return exit 1
-   with `--fail-on-reach`. A gate that never fails is not useful.
+5. The compiled CLI help and ten-probe built-in-client comparison.
+6. The seven-case direct-address suite against the three pinned library versions.
+7. Both suites against the guarded client with `--fail-on-reach`.
+8. A negative control: the plain client must return exit 1 and contain observed
+   `REACHED` results. A generic crash is not accepted as a passing negative control.
+9. A real, compact comparison recorded in a pseudo-terminal, with measured hit
+   totals checked against the independently run library suite.
 
 Tests and scans run in a fresh Linux network namespace with only loopback up.
-Dependency installation happens before isolation. This keeps the intentionally
-unsafe clients away from real metadata services and other networks. Isolation
-errors fail the job; there is no fallback to unrestricted scanning.
+Dependencies are installed before isolation. This keeps intentionally unsafe
+clients away from real metadata services and other networks. Isolation errors
+fail the job; there is no fallback to unrestricted scanning.
 
 ## Find the actual output
 
-Open the repository's **Actions** tab, select the `ci` run for the commit being
-released, and download `release-verification-<sha>`. It contains:
+Open **Actions**, select the `ci` run for the commit, and download
+`release-verification-node<version>-<sha>`. It contains:
 
 - `environment.txt`, `network.txt`, and `versions.txt` for reproducibility;
-- installation, typecheck, build, and test logs;
-- `builtins`, `libraries`, and `guarded` results in JSON and readable text;
+- install, typecheck, build, and test logs;
+- `dependency-audit.json`, the audit gate result, and audit-gate tests;
+- `builtins`, `libraries`, and `guarded` JSON and readable scan tables;
 - the unsafe-client negative control and its observed exit status;
+- `demo.cast`, `demo.txt`, and `demo.json`;
 - `RESULTS.txt`, written only after every required check succeeds.
 
-GitHub retains these artifacts for 14 days. Save the output for a release before
-it expires. On a pull request, GitHub may test a synthetic merge commit; record
-both that tested SHA and the PR head. Run CI again after merging.
+Artifacts expire after 14 days. Save release evidence before expiration. A pull
+request can test a synthetic merge commit: record that SHA and the PR head, and
+verify CI again after merging. Do not call a historical transcript a fresh result.
 
-Do not describe old README output or an unexecuted script as fresh verification.
-Network failures and deadline timing can change between environments. In a
-loopback-only namespace, a pinned public DNS answer can fail immediately and
-produce `PREVENTED` rather than the historical `BLOCKED` deadline result. Neither
-means that the internal service was reached, and neither proves real DNS rebinding
-is covered.
+## Compact demonstration
 
-## Local reproduction
-
-Use Node.js 22 or newer and the committed dependency lockfile:
+After cloning the repository, use Node.js 22.12.0 or newer on a supported release
+line (CI tests 22 and 24):
 
 ```bash
 npm ci
 npm run typecheck
 npm run build
-node dist/cli.js --help
-node dist/cli.js scan --client libs --suite direct
+node scripts/demo.mjs
 ```
 
-The direct suite targets only the lab's local service. Still use a disposable,
-authorized environment: the address spellings include `0.0.0.0` and IPv4-mapped
-IPv6, whose behavior can vary by operating system.
+The demonstration runs all seven direct-address cases against all three pinned
+libraries. It prints real verdicts and independent internal-hit counts, not a
+hardcoded table. It needs no account or API key. Use an authorized disposable
+environment; `0.0.0.0` and IPv4-mapped IPv6 behavior can vary by operating system.
 
-For the full test suite and redirect scans, use the loopback-only network
-namespace shown in `.github/workflows/ci.yml`, or a disposable container/VM with
-external and link-local access disabled. Do not run unsafe clients on a cloud
-instance or a network with sensitive services merely because the listeners are
-bound to loopback. Some probes attempt non-loopback destinations.
+CI runs `python3 scripts/record-demo.py verification/demo.cast` in the isolated
+network. The result is an asciicast v2 recording of a real process in a
+pseudo-terminal. `demo.txt` preserves the text, and `demo.json` preserves its
+measured scans. A video rendering may hold the final output for readability;
+label that edit rather than implying the scan took longer than it did.
 
-## Make a launch demonstration
+## Full local verification
 
-Use the actual scan tables from a verified run, or record a terminal running the
-compiled direct-suite command in an isolated local environment. Show the commit,
-Node version, command, verdict legend, and result. Label an edited excerpt as an
-excerpt; label a rendering of CI results as a CI-results visualization rather than
-a live recording. Never generate a fictional successful scan.
+For the complete tests and redirect scans, use the loopback-only namespace in
+`.github/workflows/ci.yml`, or a disposable container/VM with external and
+link-local access disabled. Some probes attempt non-loopback destinations. Do
+not run them on a cloud instance or sensitive network merely because the lab's
+listeners are on loopback.
 
-## Scope and interpretation
+## Interpretation and limitations
 
-There are ten main SSRF/fetch-safety probes and seven separate direct-address
-cases, not seventeen independent guarantees. The two suites overlap in the
-behavior they exercise. Plain HTTP and an injected resolver do not test TLS,
-real recursive DNS, or production deployment behavior.
+There are ten main SSRF/fetch-safety probes and seven separate direct cases,
+not seventeen independent guarantees. Plain HTTP and an injected resolver do
+not test TLS, real recursive DNS, or production deployment behavior.
 
-`--fail-on-reach` rejects observed reach. It does not require every other row to
-be `BLOCKED`, and it is not a security certification. A client-reported refusal
-alone cannot outweigh an observed internal hit. Adapters must finish or cancel
-their network work before settling `fetch`, and scans must not share one range
-concurrently: the hit counter is scoped to a sequential probe, not a request ID.
+Network errors and deadlines vary. A pinned public answer can fail immediately
+in the isolated namespace, yielding `PREVENTED` rather than the historical
+`BLOCKED` deadline. Neither result means the internal service was reached, and
+neither by itself proves real-world DNS-rebinding protection.
 
-Keep the existing research write-up and disclosure timeline intact. A CVE
-request is not an assigned CVE; do not add a CVE badge or a confirmed severity
-claim without assignment evidence.
+`--fail-on-reach` rejects observed reach; it does not require every other result
+to be `BLOCKED`. The hit counter takes precedence over a claimed policy refusal.
+Adapters must finish or cancel network work before settling `fetch`. Do not share
+one range between concurrent scans: the counter is sequential, not a request-ID
+correlation system.
+
+The pinned library comparison must reproduce the 0 / 0 / 2 internal hits on the
+supported Linux CI environments. Keep the existing research write-up and timeline
+intact. A CVE request is not an assigned CVE. The fixture's npm audit advisory is
+not evidence of assignment or a severity rating for the pending request.

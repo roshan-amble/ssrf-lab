@@ -10,6 +10,10 @@ permissions:
 
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -18,105 +22,80 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v5
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node }}
           cache: npm
-
       - name: Record verification environment
         run: |
           mkdir -p verification
-          {
-            git rev-parse HEAD
-            node --version
-            npm --version
-            uname -srm
-          } | tee verification/environment.txt
-
+          { git rev-parse HEAD; node --version; npm --version; uname -srm; } | tee verification/environment.txt
       - name: Clean dependency installation
         run: npm ci 2>&1 | tee verification/install.txt
-
-      # Deliberately vulnerable libraries are part of this research fixture.
-      # Report advisories explicitly; functional CI is not a clean-audit claim.
-      - name: Record dependency audit for review
+      - name: Gate dependency advisories with a narrow research-fixture exception
         run: |
+          node --test scripts/check-audit.test.mjs | tee verification/audit-gate-tests.txt
           set +e
           npm audit --json > verification/dependency-audit.json
           status=$?
           set -e
-          if [ "$status" -gt 1 ]; then
-            cat verification/dependency-audit.json
-            exit "$status"
-          fi
-          node --input-type=module <<'NODE'
-          import { readFileSync, writeFileSync } from 'node:fs';
-          const report = JSON.parse(readFileSync('verification/dependency-audit.json', 'utf8'));
-          if (report.error || !report.metadata) throw new Error('Dependency audit did not return a valid report');
-          const summary = {
-            vulnerabilities: report.metadata.vulnerabilities,
-            findings: Object.values(report.vulnerabilities ?? {}).map(item => ({
-              name: item.name,
-              severity: item.severity,
-              isDirect: item.isDirect,
-              range: item.range,
-              via: item.via,
-              fixAvailable: item.fixAvailable,
-            })),
-          };
-          const text = JSON.stringify(summary, null, 2);
-          writeFileSync('verification/dependency-summary.json', `${text}\n`);
-          console.log(text);
-          NODE
-
-      - name: Typecheck
-        run: npm run typecheck 2>&1 | tee verification/typecheck.txt
-
-      - name: Build the distributed CLI
-        run: npm run build 2>&1 | tee verification/build.txt
-
-      # The lab's listeners are local, but its deliberately unsafe clients can
-      # follow redirects to metadata/documentation addresses. Permit loopback
-      # only: no external interface, route, metadata service, or real target.
-      - name: Tests and compiled CLI scans in a loopback-only network
+          if [ "$status" -gt 1 ]; then cat verification/dependency-audit.json; exit "$status"; fi
+          node scripts/check-audit.mjs | tee verification/audit-gate.txt
+      - name: Typecheck and compile
+        run: |
+          npm run typecheck 2>&1 | tee verification/typecheck.txt
+          npm run build 2>&1 | tee verification/build.txt
+          node --check scripts/demo.mjs
+          python3 -m py_compile scripts/record-demo.py
+      # Unsafe clients must not contact real metadata services or other networks.
+      - name: Tests, compiled CLI, and real demo in a loopback-only network
         run: |
           sudo env "PATH=$PATH" unshare --net -- bash -euo pipefail -c '
             ip link set lo up
             ip -brief address | tee verification/network.txt
             npm test 2>&1 | tee verification/tests.txt
             node dist/cli.js --help | tee verification/help.txt
-            node dist/cli.js scan --client all --json | tee verification/builtins.json
-            node dist/cli.js scan --client libs --suite direct --json | tee verification/libraries.json
-            node dist/cli.js scan --client guarded --suite all --fail-on-reach --json | tee verification/guarded.json
-            # Check that the CI gate actually fails for an unsafe client.
+            node dist/cli.js scan --client all --json > verification/builtins.json
+            node dist/cli.js scan --client libs --suite direct --json > verification/libraries.json
+            node dist/cli.js scan --client guarded --suite all --fail-on-reach --json > verification/guarded.json
             set +e
             node dist/cli.js scan --client plain --suite direct --fail-on-reach --json > verification/negative-control.json
             status=$?
             set -e
             test "$status" -eq 1
             printf "Unsafe-client gate returned expected exit status %s\n" "$status" | tee verification/negative-control.txt
+            python3 scripts/record-demo.py verification/demo.cast
           '
-
-      - name: Render measured scan tables
+      - name: Validate measured results and preserve readable tables
         run: |
           node --input-type=module <<'NODE'
           import { readFileSync, writeFileSync } from 'node:fs';
+          import assert from 'node:assert/strict';
           import { LEGEND, renderTable } from './dist/checker/report.js';
+          const load = name => JSON.parse(readFileSync(`verification/${name}.json`, 'utf8'));
+          const unsafe = load('negative-control').scans;
+          assert(unsafe.length === 1 && unsafe[0].results.length === 7 && unsafe[0].reached > 0);
+          const guarded = load('guarded').scans;
+          assert(guarded.length === 1 && guarded[0].results.length === 17 && guarded[0].reached === 0);
+          const libs = load('libraries').scans;
+          assert.deepEqual(libs.map(s => [s.results.length, s.blocked, s.reached]), [[7, 7, 0], [7, 7, 0], [7, 5, 2]]);
+          assert.deepEqual(libs[2].results.filter(r => r.verdict === 'REACHED').map(r => r.probeId), ['direct-zero-host', 'direct-ipv6-mapped']);
+          assert.deepEqual(load('demo').measured.map(m => m.internalHits), [0, 0, 2]);
           for (const name of ['builtins', 'libraries', 'guarded']) {
-            const { scans } = JSON.parse(readFileSync(`verification/${name}.json`, 'utf8'));
-            const report = `${LEGEND}\n${scans.map(renderTable).join('\n')}\n`;
+            const report = `${LEGEND}\n${load(name).scans.map(renderTable).join('\n')}\n`;
             writeFileSync(`verification/${name}.txt`, report);
             console.log(report);
           }
           NODE
           npm ls --depth=0 2>&1 | tee verification/versions.txt
-          echo 'ALL FUNCTIONAL RELEASE CHECKS PASSED; SEE DEPENDENCY AUDIT SEPARATELY' | tee verification/RESULTS.txt
-
+          echo 'FUNCTIONAL CHECKS AND AUDIT GATE PASSED; TWO RESEARCH-FIXTURE FINDINGS ARE EXCEPTED' | tee verification/RESULTS.txt
       - name: Preserve actual verification output
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: release-verification-${{ github.sha }}
+          name: release-verification-node${{ matrix.node }}-${{ github.sha }}
           path: verification/
           if-no-files-found: error
           retention-days: 14
