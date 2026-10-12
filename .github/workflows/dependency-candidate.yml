@@ -1,6 +1,7 @@
 name: dependency-candidate
 
-# Temporary read-only job: generates reviewable files, never pushes or publishes.
+# Temporary transfer of already-reviewed candidate files into Git blobs.
+# Does not execute artifact code, update refs, commit, merge, or publish.
 on:
   push:
     branches: [launch/release-verification]
@@ -10,86 +11,45 @@ permissions:
   contents: read
 
 jobs:
-  candidate:
+  stage-verified-files:
+    if: github.repository == 'roshan-amble/ssrf-lab'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    defaults:
-      run:
-        shell: bash
+    timeout-minutes: 3
+    permissions:
+      actions: read
+      contents: write
     steps:
-      - uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-      - name: Prepare a clean lockfile with the research fixtures pinned
+      - name: Verify and stage the exact reviewed files
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p candidate
-          node --input-type=module <<'NODE'
-          import { readFileSync, writeFileSync, unlinkSync } from 'node:fs';
-          const file = JSON.parse(readFileSync('package.json', 'utf8'));
-          const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
-          const names = ['request-filtering-agent', 'ssrf-agent', 'ssrf-req-filter', 'ip', 'ipaddr.js'];
-          const baseline = Object.fromEntries(names.map(name => [name, lock.packages[`node_modules/${name}`]]));
-          writeFileSync('candidate/fixture-baseline.json', JSON.stringify(baseline, null, 2));
-          for (const name of Object.keys(file.devDependencies)) {
-            file.devDependencies[name] = lock.packages[`node_modules/${name}`].version;
-          }
-          file.devDependencies.vitest = '5.0.3';
-          file.engines.node = '>=22.12.0';
-          writeFileSync('package.json', `${JSON.stringify(file, null, 2)}\n`);
-          // A clean resolution avoids the old Vitest/Vite peer graph. No force
-          // or legacy-peer-deps, and the existing research fixture is checked below.
-          unlinkSync('package-lock.json');
-          NODE
-          npm install
-          node --input-type=module <<'NODE'
-          import { readFileSync } from 'node:fs';
-          import { deepStrictEqual } from 'node:assert';
-          const before = JSON.parse(readFileSync('candidate/fixture-baseline.json', 'utf8'));
-          const after = JSON.parse(readFileSync('package-lock.json', 'utf8')).packages;
-          for (const [name, old] of Object.entries(before)) {
-            const item = after[`node_modules/${name}`];
-            deepStrictEqual([item.version, item.resolved, item.integrity], [old.version, old.resolved, old.integrity]);
-          }
-          console.log('Research fixture versions, URLs, and integrity hashes unchanged.');
-          NODE
-      - name: Verify clean install and compilation
-        run: |
-          npm ci
-          npm run typecheck
-          npm run build
-          npm ls --depth=0 | tee candidate/versions.txt
-      - name: Verify candidate in an isolated network
-        run: |
-          sudo env "PATH=$PATH" unshare --net -- bash -euo pipefail -c '
-            ip link set lo up
-            npm test 2>&1 | tee candidate/tests.txt
-            node dist/cli.js scan --client libs --suite direct --json | tee candidate/libraries.json
-            node dist/cli.js scan --client guarded --suite all --fail-on-reach --json | tee candidate/guarded.json
-          '
-      - name: Capture the candidate and its audit
-        if: always()
-        run: |
-          cp package.json candidate/
-          if [ -f package-lock.json ]; then cp package-lock.json candidate/; fi
-          git diff -- package.json package-lock.json > candidate/dependencies.patch
-          set +e
-          npm audit --json > candidate/audit.json
-          audit_status=$?
-          set -e
-          printf '%s\n' "$audit_status" > candidate/audit-exit.txt
-          tar --exclude=./.git --exclude=./node_modules --exclude=./dist --exclude=./candidate -czf candidate/source.tgz .
-          {
-            git rev-parse HEAD
-            node --version
-            npm --version
-          } > candidate/environment.txt
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: dependency-candidate-${{ github.sha }}
-          path: candidate/
-          retention-days: 7
-          if-no-files-found: error
+          python3 - <<'PY'
+          import hashlib, io, json, os, urllib.request, zipfile
+          repo = 'roshan-amble/ssrf-lab'
+          api = 'https://api.github.com/repos/' + repo
+          token = os.environ['GH_TOKEN']
+          def request(url, data=None):
+              req = urllib.request.Request(url, data=data, headers={
+                  'Authorization': 'Bearer ' + token,
+                  'Accept': 'application/vnd.github+json',
+                  'Content-Type': 'application/json',
+                  'X-GitHub-Api-Version': '2022-11-28',
+              })
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return response.read()
+          archive = request(api + '/actions/artifacts/11720926725/zip')
+          assert hashlib.sha256(archive).hexdigest() == 'd9c5451837fe6df683a74f56e25c9255e85a037335d51ed28c5e3738b84bcae1'
+          with zipfile.ZipFile(io.BytesIO(archive)) as files:
+              package = json.loads(files.read('package.json'))
+              lock = json.loads(files.read('package-lock.json'))
+              assert package['devDependencies']['vitest'] == '5.0.3'
+              assert package['devDependencies']['ssrf-agent'] == '1.0.5'
+              assert lock['packages']['node_modules/ip']['version'] == '1.1.9'
+              for name in ['package.json', 'package-lock.json']:
+                  content = files.read(name)
+                  expected = hashlib.sha1(b'blob ' + str(len(content)).encode() + b'\0' + content).hexdigest()
+                  body = json.dumps({'content': content.decode('utf-8'), 'encoding': 'utf-8'}).encode()
+                  result = json.loads(request(api + '/git/blobs', body))
+                  assert result['sha'] == expected
+                  print(json.dumps({'path': name, 'sha': result['sha'], 'bytes': len(content)}))
+          PY
