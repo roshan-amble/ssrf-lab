@@ -1,0 +1,33 @@
+{
+  "repository": "roshan-amble/ssrf-lab",
+  "commit": "7f8f15f4f3f068c40e3f3c2a0f69a02eff67f684",
+  "workflow_run_id": 38190788567,
+  "workflow_url": "https://github.com/roshan-amble/ssrf-lab/actions/runs/38190788567",
+  "pull_request": "https://github.com/roshan-amble/ssrf-lab/pull/1",
+  "video_source": "node22/demo.cast: actual process output captured through a pseudo-terminal in isolated CI",
+  "video_edit": "1440x960 MP4 at 20 fps; original output timing, final frame held to 18 seconds for reading",
+  "runtime_versions": [
+    "22.23.3",
+    "24.21.0"
+  ],
+  "tests_per_runtime": {
+    "vitest": 53,
+    "audit_gate": 7
+  },
+  "audit": {
+    "critical": 0,
+    "high": 2,
+    "excepted_fixture_packages": [
+      "ip",
+      "ssrf-agent"
+    ],
+    "zero_vulnerabilities_claim": false
+  },
+  "files": {
+    "ssrf-lab-demo-preview.png": "fbf06799c3973e85880471ab77045d0b50c42a92c0bf30af81b593627f82da51",
+    "ssrf-lab-demo.txt": "9898103f2fe31654fd49ae8e0b61733034780e706f3e79d032097844da2300d3",
+    "ssrf-lab-demo.mp4": "0e8f16a9dc0ca6f0352d6d1d3c50dab6e058ba2d1f7213b8da24ea8a7227220a",
+    "ssrf-lab-demo.json": "5c5dc4a59e7cb0ea7927cc21d6eef96bf2233849bd50d9e349475b18fd1ac695",
+    "ssrf-lab-demo.cast": "85818aedf139f2afb54e6874fe36bc9249a050aeefbf8d494863a91f6d0cd4c2"
+  }
+}

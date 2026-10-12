@@ -9,7 +9,16 @@ If the internal service saw the request, a later error cannot make it `BLOCKED`.
 
 ![ci](https://github.com/roshan-amble/ssrf-lab/actions/workflows/ci.yml/badge.svg)
 
-**10 main SSRF/fetch-safety probes · 7 separate direct-address cases · MIT · Node.js 22+**
+**10 main SSRF/fetch-safety probes · 7 separate direct-address cases · MIT · Node.js 22.12+**
+
+[![Recorded Node 22 run: seven local address cases; the internal service counted 0, 0, and 2 hits for the three pinned packages.](docs/media/ssrf-lab-demo.gif)](docs/media/ssrf-lab-demo.mp4)
+
+[Watch/download the 18-second demo](docs/media/ssrf-lab-demo.mp4)
+· [Read the terminal output](docs/evidence/2026-10-12-7f8f15f/node22/demo.txt)
+· [Inspect the saved evidence](docs/evidence/2026-10-12-7f8f15f/README.md)
+
+Actual output from isolated CI at [`7f8f15f`](https://github.com/roshan-amble/ssrf-lab/commit/7f8f15f4f3f068c40e3f3c2a0f69a02eff67f684).
+The final screen is held for readability; video length is not scan runtime.
 
 Start with the direct-address comparison: the same local target, three packages
 that advertise SSRF protection. No accounts, API keys, or external targets are
@@ -173,6 +182,11 @@ node dist/cli.js scan --client libs --suite direct
 Details, root cause, suggested fix, and disclosure timeline:
 [docs/findings/2026-09-13-ssrf-agent-bypass.md](docs/findings/2026-09-13-ssrf-agent-bypass.md).
 The CVE request remains a request unless and until an assignment is confirmed.
+
+This is a reproduction of a known address-classification weakness, not a claim
+of a new attack class. See the related [`ip` advisory, CVE-2024-29415](https://github.com/advisories/GHSA-2p57-rm9w-gvfp).
+The earlier [CVE-2021-23718](https://nvd.nist.gov/vuln/detail/CVE-2021-23718)
+covers `ssrf-agent` versions **before** 1.0.5; the local results above test 1.0.5.
 
 ## The verdicts, and why there are 5
 

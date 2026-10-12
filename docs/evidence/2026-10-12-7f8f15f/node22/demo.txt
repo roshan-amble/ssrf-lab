@@ -1,0 +1,24 @@
+$ node scripts/demo.mjs verification/demo.json
+ssrf-lab | observe the destination, not just the error
+Node v22.23.3 | direct suite | local loopback target
+RFA = request-filtering-agent 3.2.1
+REQ-FILTER = ssrf-req-filter 1.1.1
+SSRF-AGENT = ssrf-agent 1.0.5
+
+Address form           RFA            REQ-FILTER     SSRF-AGENT     
+--------------------------------------------------------------------
+127.0.0.1              BLOCKED        BLOCKED        BLOCKED        
+decimal                BLOCKED        BLOCKED        BLOCKED        
+octal                  BLOCKED        BLOCKED        BLOCKED        
+hexadecimal            BLOCKED        BLOCKED        BLOCKED        
+0.0.0.0                BLOCKED        BLOCKED        REACHED        
+IPv4-mapped IPv6       BLOCKED        BLOCKED        REACHED        
+URL credentials        BLOCKED        BLOCKED        BLOCKED        
+--------------------------------------------------------------------
+Observed internal hits 0              0              2              
+
+REACHED: the internal service received a request.
+BLOCKED: a named control refused it, with no observed internal hit.
+Seven local cases, not a complete security certification.
+
+[process exited 0]

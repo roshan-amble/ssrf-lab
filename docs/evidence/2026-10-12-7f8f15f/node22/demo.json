@@ -1,0 +1,197 @@
+{
+  "node": "v22.23.3",
+  "measured": [
+    {
+      "package": "request-filtering-agent",
+      "version": "3.2.1",
+      "internalHits": 0,
+      "scan": {
+        "client": "request-filtering-agent (npm)",
+        "results": [
+          {
+            "probeId": "direct-dotted",
+            "title": "Plain 127.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1(family:undefined, host:undefined) is not allowed. Because, It is private IP address.",
+            "durationMs": 4
+          },
+          {
+            "probeId": "direct-decimal",
+            "title": "Decimal 2130706433",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1(family:undefined, host:undefined) is not allowed. Because, It is private IP address.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-octal",
+            "title": "Octal 0177.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1(family:undefined, host:undefined) is not allowed. Because, It is private IP address.",
+            "durationMs": 0
+          },
+          {
+            "probeId": "direct-hex",
+            "title": "Hexadecimal 0x7f.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1(family:undefined, host:undefined) is not allowed. Because, It is private IP address.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-zero-host",
+            "title": "The unspecified address 0.0.0.0",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 0.0.0.0(family:undefined, host:undefined) is not allowed. Because, It is meta IP address.",
+            "durationMs": 0
+          },
+          {
+            "probeId": "direct-ipv6-mapped",
+            "title": "IPv4-mapped IPv6 [::ffff:127.0.0.1]",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup ::ffff:7f00:1(family:undefined, host:undefined) is not allowed. Because, It is private IP address.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-credentials",
+            "title": "Credentials in front of the host",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1(family:undefined, host:undefined) is not allowed. Because, It is private IP address.",
+            "durationMs": 1
+          }
+        ],
+        "blocked": 7,
+        "prevented": 0,
+        "reached": 0,
+        "lucky": 0,
+        "notApplicable": 0
+      }
+    },
+    {
+      "package": "ssrf-req-filter",
+      "version": "1.1.1",
+      "internalHits": 0,
+      "scan": {
+        "client": "ssrf-req-filter (npm)",
+        "results": [
+          {
+            "probeId": "direct-dotted",
+            "title": "Plain 127.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: Call to 127.0.0.1 is blocked.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-decimal",
+            "title": "Decimal 2130706433",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: Call to 127.0.0.1 is blocked.",
+            "durationMs": 0
+          },
+          {
+            "probeId": "direct-octal",
+            "title": "Octal 0177.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: Call to 127.0.0.1 is blocked.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-hex",
+            "title": "Hexadecimal 0x7f.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: Call to 127.0.0.1 is blocked.",
+            "durationMs": 0
+          },
+          {
+            "probeId": "direct-zero-host",
+            "title": "The unspecified address 0.0.0.0",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: Call to 0.0.0.0 is blocked.",
+            "durationMs": 0
+          },
+          {
+            "probeId": "direct-ipv6-mapped",
+            "title": "IPv4-mapped IPv6 [::ffff:127.0.0.1]",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: Call to ::ffff:7f00:1 is blocked.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-credentials",
+            "title": "Credentials in front of the host",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: Call to 127.0.0.1 is blocked.",
+            "durationMs": 0
+          }
+        ],
+        "blocked": 7,
+        "prevented": 0,
+        "reached": 0,
+        "lucky": 0,
+        "notApplicable": 0
+      }
+    },
+    {
+      "package": "ssrf-agent",
+      "version": "1.0.5",
+      "internalHits": 2,
+      "scan": {
+        "client": "ssrf-agent (npm)",
+        "results": [
+          {
+            "probeId": "direct-dotted",
+            "title": "Plain 127.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1 is not allowed.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-decimal",
+            "title": "Decimal 2130706433",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1 is not allowed.",
+            "durationMs": 0
+          },
+          {
+            "probeId": "direct-octal",
+            "title": "Octal 0177.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1 is not allowed.",
+            "durationMs": 0
+          },
+          {
+            "probeId": "direct-hex",
+            "title": "Hexadecimal 0x7f.0.0.1",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1 is not allowed.",
+            "durationMs": 1
+          },
+          {
+            "probeId": "direct-zero-host",
+            "title": "The unspecified address 0.0.0.0",
+            "verdict": "REACHED",
+            "note": "the internal service recorded a request, independent of the returned body",
+            "durationMs": 9
+          },
+          {
+            "probeId": "direct-ipv6-mapped",
+            "title": "IPv4-mapped IPv6 [::ffff:127.0.0.1]",
+            "verdict": "REACHED",
+            "note": "the internal service recorded a request, independent of the returned body",
+            "durationMs": 3
+          },
+          {
+            "probeId": "direct-credentials",
+            "title": "Credentials in front of the host",
+            "verdict": "BLOCKED",
+            "note": "forbidden-address: DNS lookup 127.0.0.1 is not allowed.",
+            "durationMs": 0
+          }
+        ],
+        "blocked": 5,
+        "prevented": 0,
+        "reached": 2,
+        "lucky": 0,
+        "notApplicable": 0
+      }
+    }
+  ]
+}

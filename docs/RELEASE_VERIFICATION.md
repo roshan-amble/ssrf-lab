@@ -26,6 +26,12 @@ fail the job; there is no fallback to unrestricted scanning.
 
 ## Find the actual output
 
+The [saved verification snapshot for `7f8f15f`](evidence/2026-10-12-7f8f15f/README.md)
+contains both Node runtimes' original logs, JSON, terminal recordings, and
+provenance. Its archive and the original demo video are stored in this repository
+and do not depend on Actions artifact retention. This is evidence for that
+specific commit, not an automatically refreshed result for future code changes.
+
 Open **Actions**, select the `ci` run for the commit, and download
 `release-verification-node<version>-<sha>`. It contains:
 
