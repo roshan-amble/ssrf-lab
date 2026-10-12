@@ -11,14 +11,13 @@ If the internal service saw the request, a later error cannot make it `BLOCKED`.
 
 **10 main SSRF/fetch-safety probes · 7 separate direct-address cases · MIT · Node.js 22.12+**
 
-[![Recorded Node 22 run: seven local address cases; the internal service counted 0, 0, and 2 hits for the three pinned packages.](docs/media/ssrf-lab-demo.gif)](docs/media/ssrf-lab-demo.mp4)
+**Recorded results: seven local address cases, three pinned packages.**
 
-[Watch/download the 18-second demo](docs/media/ssrf-lab-demo.mp4)
-· [Read the terminal output](docs/evidence/2026-10-12-7f8f15f/node22/demo.txt)
-· [Inspect the saved evidence](docs/evidence/2026-10-12-7f8f15f/README.md)
+[![Static screenshot of the recorded Node 22 results: the internal service counted 0, 0, and 2 hits for the three pinned packages.](docs/media/ssrf-lab-results.png)](docs/evidence/2026-10-12-7f8f15f/README.md)
 
 Actual output from isolated CI at [`7f8f15f`](https://github.com/roshan-amble/ssrf-lab/commit/7f8f15f4f3f068c40e3f3c2a0f69a02eff67f684).
-The final screen is held for readability; video length is not scan runtime.
+[Read the terminal output](docs/evidence/2026-10-12-7f8f15f/node22/demo.txt)
+· [Inspect the evidence and original recording](docs/evidence/2026-10-12-7f8f15f/README.md)
 
 Start with the direct-address comparison: the same local target, three packages
 that advertise SSRF protection. No accounts, API keys, or external targets are

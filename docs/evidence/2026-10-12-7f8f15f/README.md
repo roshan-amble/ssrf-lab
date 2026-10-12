@@ -1,22 +1,27 @@
-# Recorded demonstration and verification evidence
+# Recorded results and verification evidence
 
 This snapshot preserves the actual post-merge verification of
 [`7f8f15f4f3f068c40e3f3c2a0f69a02eff67f684`](https://github.com/roshan-amble/ssrf-lab/commit/7f8f15f4f3f068c40e3f3c2a0f69a02eff67f684)
 from [CI run 38190788567](https://github.com/roshan-amble/ssrf-lab/actions/runs/38190788567),
 completed on October 12, 2026 UTC. It is a historical snapshot for this commit.
 
-- [Original MP4 demonstration](../../media/ssrf-lab-demo.mp4)
+- [Static screenshot of the recorded results](../../media/ssrf-lab-results.png)
+- [Original MP4 terminal replay](../../media/ssrf-lab-demo.mp4)
 - [Readable Node 22 terminal output](node22/demo.txt)
 - [Original asciicast recording](node22/demo.cast)
 - [Measured demo results as JSON](node22/demo.json)
 - [Download both runtimes' complete evidence](ssrf-lab-verified-evidence.zip)
 - [Original provenance record](provenance.json)
 
-The MP4 renders the real Node 22 pseudo-terminal capture. Output timing is
-retained, then the final screen is held to make the total video 18 seconds.
-That duration is not a scan-runtime measurement. The README animation is a
-1200-pixel-wide, 5 fps conversion of this MP4. It samples the recording's timing;
-the original MP4 and asciicast remain available above.
+The README shows a static screenshot extracted from the original MP4 at 0.15
+seconds, when all recorded output is visible. No result text was retyped or
+changed. The screenshot links here so readers can inspect the underlying data.
+
+The MP4 is a rendered replay of the real Node 22 pseudo-terminal capture, not a
+desktop screen recording. The terminal recording ends at 0.112647 seconds; the
+20 fps video displays the complete output by 0.15 seconds and holds it through
+18 seconds for reading. These timings describe this recording, not a general
+performance benchmark. The original MP4 and asciicast remain available above.
 
 ## What the run established
 
@@ -52,7 +57,8 @@ establish real recursive-DNS or TTL behavior. See
 The archive and MP4 below are byte-for-byte copies of the preserved artifacts.
 The extracted transcript, asciicast, and demo JSON match their hashes in the
 original provenance record. That record also names a prior PNG preview that is
-not included here; the animated README preview is the derived GIF described above.
+not included here; the current README screenshot is the extracted MP4 frame
+described above.
 
 | File | SHA-256 |
 | --- | --- |
