@@ -24,9 +24,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import hashlib, io, json, os, urllib.request, zipfile
-          repo = 'roshan-amble/ssrf-lab'
-          api = 'https://api.github.com/repos/' + repo
+          import hashlib, io, json, os, urllib.request, urllib.parse, zipfile
+          class PublicRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  if urllib.parse.urlsplit(newurl).scheme != 'https':
+                      raise RuntimeError('Refusing an insecure redirect')
+                  redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
+                  if urllib.parse.urlsplit(newurl).hostname != urllib.parse.urlsplit(req.full_url).hostname:
+                      redirected.remove_header('Authorization')
+                      redirected.remove_header('Content-type')
+                  return redirected
+          opener = urllib.request.build_opener(PublicRedirect())
+          api = 'https://api.github.com/repos/roshan-amble/ssrf-lab'
           token = os.environ['GH_TOKEN']
           def request(url, data=None):
               req = urllib.request.Request(url, data=data, headers={
@@ -35,7 +44,7 @@ jobs:
                   'Content-Type': 'application/json',
                   'X-GitHub-Api-Version': '2022-11-28',
               })
-              with urllib.request.urlopen(req, timeout=30) as response:
+              with opener.open(req, timeout=30) as response:
                   return response.read()
           archive = request(api + '/actions/artifacts/11720926725/zip')
           assert hashlib.sha256(archive).hexdigest() == 'd9c5451837fe6df683a74f56e25c9255e85a037335d51ed28c5e3738b84bcae1'
