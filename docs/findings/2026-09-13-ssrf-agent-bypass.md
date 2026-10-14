@@ -1,5 +1,11 @@
 # ssrf-agent 1.0.5 reaches loopback through 2 address spellings
 
+This finding was reproduced with [ssrf-lab](../../README.md), an MIT-licensed
+local testing harness for SSRF defenses in Node.js HTTP clients. It checks whether
+the internal service received a request, even if the client throws afterward.
+[Run the local comparison](#reproduce) or
+[test your own client](#test-your-own-client).
+
 **Status:** measured on 2026-09-13. See the timeline at the end.
 **Package:** [`ssrf-agent`](https://www.npmjs.com/package/ssrf-agent) 1.0.5, the
 latest published version. Its stated purpose is "prevent SSRF in http(s)
@@ -26,10 +32,16 @@ string and counts its requests, so a hit is positive evidence.
 
 ## Reproduce
 
+Requires Node.js 22.12 or later. This command runs only the local direct-address
+suite. Use a disposable environment; address behavior can vary by operating
+system.
+
 ```bash
-git clone https://github.com/roshan-amble/ssrf-lab
-cd ssrf-lab && npm install
-npm run scan -- scan --client ssrf-agent --suite direct
+git clone https://github.com/roshan-amble/ssrf-lab.git
+cd ssrf-lab
+npm ci
+npm run build
+node dist/cli.js scan --client ssrf-agent --suite direct
 ```
 
 ## Why
@@ -69,6 +81,24 @@ latest published `ssrf-agent`, whose whole purpose is to stop it.
 - Judge the address the socket is about to use, and re-judge it on the
   `lookup` event. `ssrf-agent` already listens for `lookup`, but it reuses the
   same text-based checker there.
+
+## Test your own client
+
+If you maintain a webhook sender, URL previewer, or another server-side fetcher,
+use the [adapter example](../../README.md#use-it-on-your-own-client) to test your
+client against the same local attack range. The independent hit counter catches
+requests that reach the internal service even when the client later reports an
+error.
+
+The [quickstart](../../README.md#quick-start) includes the three-package
+comparison and JSON output. The broader harness has 10 main SSRF/fetch-safety
+probes plus the separate seven direct-address cases.
+
+**Run full scans only in a Linux network namespace with only loopback enabled**,
+following the [isolation instructions](../RELEASE_VERIFICATION.md). The adapter
+example runs a full scan. DNS rebinding is simulated, and passing these bounded
+tests does not prove complete SSRF protection. This is a testing harness, not a
+production protection library.
 
 ## Timeline
 
