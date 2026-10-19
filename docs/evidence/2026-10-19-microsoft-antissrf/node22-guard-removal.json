@@ -1,0 +1,270 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 7,
+    "passes": 0,
+    "pending": 0,
+    "failures": 7,
+    "start": "2026-10-19T23:06:37.216Z",
+    "end": "2026-10-19T23:06:37.258Z",
+    "duration": 42
+  },
+  "tests": [
+    {
+      "title": "blocks dotted loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks dotted loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 15,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks octal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks octal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks hexadecimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks hexadecimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks mapped IPv6 loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks mapped IPv6 loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks 302 redirect to loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 302 redirect to loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks 307 redirect to decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 307 redirect to decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    }
+  ],
+  "pending": [],
+  "failures": [
+    {
+      "title": "blocks dotted loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks dotted loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 15,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks octal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks octal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks hexadecimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks hexadecimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks mapped IPv6 loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks mapped IPv6 loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks 302 redirect to loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 302 redirect to loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "blocks 307 redirect to decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 307 redirect to decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: The internal fixture recorded a request\n    at assertBlocked (tests/FunctionalTests/LocalHttpAgent.test.ts:72:16)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Context.<anonymous> (tests/FunctionalTests/LocalHttpAgent.test.ts:154:13)",
+        "message": "The internal fixture recorded a request",
+        "generatedMessage": false,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "==",
+        "diff": "simple"
+      }
+    }
+  ],
+  "passes": []
+}

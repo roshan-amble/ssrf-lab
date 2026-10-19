@@ -8,6 +8,7 @@ dependencies, with no production dependency on ssrf-lab.
 - Candidate: [`0426cc3`](https://github.com/roshan-amble/AntiSSRF/commit/0426cc35d9b28615810414c819cc2323740a0a4e).
 - [Draft verification PR in the contributor fork](https://github.com/roshan-amble/AntiSSRF/pull/1).
 - [Verification workflow](../../.github/workflows/antissrf-local.yml).
+- [Retained clean-runner reports, logs and provenance](../../docs/evidence/2026-10-19-microsoft-antissrf/README.md).
 
 Only `nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts` changes in the
 candidate. The existing suite covers address classification, DNS, HTTP agents
@@ -60,7 +61,11 @@ Local Node 24.19.0 validation passed all 17 checks, TypeScript build, source
 lint, changed-file formatting and diff checks. The guard-removal control failed
 all seven refusal checks. The unchanged upstream full suite produced 63 passes
 and 50 failures in the local environment, including external DNS failures.
-Use the recorded clean-runner results when assessing full-suite status.
+On the clean GitHub runner, the baseline passed 299 tests and three package
+tests. The same candidate passed all 316 tests and three package tests after
+one retry of seven existing live-HTTPS test failures. The offline checks and
+guard-removal controls passed on all four runtimes. Both candidate attempts
+are retained in the linked evidence; no candidate source changed on retry.
 
 This contribution does not assess DNS rebinding, TLS, every private address,
 or all HTTP clients. No production source, configuration file, manifest or
