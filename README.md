@@ -51,9 +51,20 @@ Excerpt from the [full run](#measured-output).
 
 ## Quick start
 
-The direct suite needs no accounts, API keys or external targets. It sends
-requests at the lab's own internal service through three npm packages that
-advertise SSRF protection.
+With Node.js 22.12 or later, compare the three built-in clients against the
+lab's own loopback service:
+
+```bash
+npx ssrf-lab@0.1.0 scan --client all --suite direct          # add --json for machine-readable output
+```
+
+This direct-address suite needs no accounts, API keys or external targets.
+It compares an unprotected fetcher, a check-then-connect client and the lab's
+guarded client. The npm package does not install the third-party packages it
+compares.
+
+To reproduce the pinned npm-package comparisons or work on the harness, build
+from a clone. Its development dependencies include the comparison packages:
 
 ```bash
 git clone https://github.com/roshan-amble/ssrf-lab.git
@@ -83,7 +94,8 @@ with only loopback enabled. This prevents deliberately unsafe clients from
 contacting real metadata services or other networks. See
 [release verification](docs/RELEASE_VERIFICATION.md) and the
 [workflow](.github/workflows/ci.yml) for the exact commands and saved logs.
-The package is not published on npm yet, so these instructions build from a clone.
+Standalone npm installations that select a third-party client print the exact
+commands to install the required comparison packages when they are missing.
 
 ## What it is
 
