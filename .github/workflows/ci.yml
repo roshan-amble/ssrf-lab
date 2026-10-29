@@ -57,6 +57,7 @@ jobs:
             ip link set lo up
             ip -brief address | tee verification/network.txt
             npm test 2>&1 | tee verification/tests.txt
+            node examples/late-error/demo.mjs | tee verification/late-error-demo.txt
             node dist/cli.js --help | tee verification/help.txt
             node dist/cli.js scan --client all --json > verification/builtins.json
             node dist/cli.js scan --client libs --suite direct --json > verification/libraries.json

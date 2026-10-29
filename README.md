@@ -1,42 +1,44 @@
 # ssrf-lab
 
+Test the Node.js fetcher behind your link previews, URL imports and webhooks.
+
 **A failed HTTP request is not proof that your SSRF defense worked.**
 
-ssrf-lab tests the Node.js fetcher behind your link previews, URL imports and
-webhook destinations. It tells an explicit refusal apart from a request that
-failed for some other reason, using a canary and an independent hit counter on a
-separate internal service. If that service saw the request, a later error cannot
-make the result `BLOCKED`.
+## Quick start
+
+With **Node.js 22.12+**, run the local direct-address demo:
+
+```bash
+npx ssrf-lab@0.1.0 scan --client all --suite direct
+```
+
+No accounts, API keys or external targets. This compares an unprotected fetcher,
+a check-then-connect client and the lab's guarded client against its own local
+fixture. Look for `REACHED` on the unprotected client and explicit `BLOCKED`
+results on the guarded client. Address behavior can vary by operating system.
+Add `--json` for a machine-readable report.
+
+The npm package does not install the third-party comparison packages. These
+built-in clients demonstrate the harness; testing your application requires
+connecting its actual fetch function.
+
+[Walk through a request that throws after reaching the destination](docs/tutorials/failed-fetch-internal-hit.md).
+The runnable example checks the destination's counter independently of the
+client's error, with successful-request and refusal controls.
+
+Star this repository to follow new fixtures and adapters.
 
 ![ci](https://github.com/roshan-amble/ssrf-lab/actions/workflows/ci.yml/badge.svg)
 
-On the cloud-metadata probe below, both clients' requests failed. Only one of
-those failures was a defense:
-
-```
-node-fetch (global, defaults)
-  [!] REACHED    Redirect into loopback                        the internal service recorded a request, independent of the returned body
-  [~] LUCKY      Redirect into cloud metadata                  no policy; the request failed with fetch failed <- ENETUNREACH
-
-guarded client (this repo)
-  [+] BLOCKED    Redirect into loopback                        forbidden-address: 127.0.0.1 is loopback
-  [+] BLOCKED    Redirect into cloud metadata                  forbidden-address: 169.254.169.254 is link-local
-```
-
-`LUCKY` means nothing refused the request; something else failed first. On a
-network where the metadata endpoint is reachable, that request lands.
-Excerpt from the [full run](#measured-output).
-
-**10 main SSRF/fetch-safety probes · 7 separate direct-address cases · MIT · Node.js 22.12+**
+**10 main SSRF/fetch-safety probes · 7 separate direct-address cases · MIT**
 
 ## Try it
 
 | You want to | Start here |
 | --- | --- |
-| See it work, with no local install or secrets | [Create a repository from the starter](https://github.com/roshan-amble/ssrf-lab-starter/generate) and run its Node 22/24 workflow from Actions ([recorded passing and failing runs](https://github.com/roshan-amble/ssrf-lab-starter/tree/main/verification)) |
 | Test your own fetcher | The [custom-fetcher example](examples/custom-fetcher/README.md): an application module, a deliberately unsafe control and a copyable isolated CI workflow (Node.js 22.19+) |
+| Run the sample on GitHub, with no local install or secrets | [Create a repository from the starter](https://github.com/roshan-amble/ssrf-lab-starter/generate) and run its Node 22/24 workflow from Actions ([recorded passing and failing runs](https://github.com/roshan-amble/ssrf-lab-starter/tree/main/verification)) |
 | Catch regressions in CI | The [reusable GitHub Action](action/README.md) · [step-by-step tutorial](docs/tutorials/node-fetcher-github-actions.md) · [48-second recording](docs/media/ssrf-lab-walkthrough.mp4) ([raw recording and reports](docs/evidence/2026-10-16-action/README.md)) |
-| Run it locally | The [quick start](#quick-start) below |
 
 For HTTPS test development, the [isolated fixture prototype](examples/https-fixture/README.md)
 checks real TLS, independent destination counters and certificate-error controls
@@ -53,19 +55,7 @@ against the lab's reference client. Application adapters are a separate step.
 - Recorded trials of [guarded-fetch, linkpeek and Linkwarden](#tested-against)
   on Node 22 and 24.
 
-## Quick start
-
-With Node.js 22.12 or later, compare the three built-in clients against the
-lab's own loopback service:
-
-```bash
-npx ssrf-lab@0.1.0 scan --client all --suite direct          # add --json for machine-readable output
-```
-
-This direct-address suite needs no accounts, API keys or external targets.
-It compares an unprotected fetcher, a check-then-connect client and the lab's
-guarded client. The npm package does not install the third-party packages it
-compares.
+## Run from source
 
 To reproduce the pinned npm-package comparisons or work on the harness, build
 from a clone. Its development dependencies include the comparison packages:
@@ -143,10 +133,12 @@ requires a successful allowed request and a working unsafe control.
 | Linkwarden's shared `safeFetch()` at `952ac45` | [Application fetch recipe](integrations/linkwarden/README.md) · [Raw reports](docs/evidence/2026-10-20-linkwarden/README.md) | 9 explicit refusals; 0 internal hits |
 
 These are tests prepared and run for ssrf-lab, not evidence of maintainer
-adoption or endorsements. The [guarded-fetch PR](https://github.com/vercel-labs/guarded-fetch/pull/12),
-the [linkpeek trial discussion](https://github.com/thegruber/linkpeek/discussions/39#discussioncomment-19046880)
-and the Linkwarden [test-coverage proposal](https://github.com/linkwarden/linkwarden/issues/1869)
-await maintainer feedback; the Linkwarden coverage is limited to the shared fetch
+adoption or endorsements. The [guarded-fetch PR](https://github.com/vercel-labs/guarded-fetch/pull/12)
+was closed without merging: the maintainer declined the third-party GitHub
+Action because of its trust cost. The recorded trial remains reproducible.
+The [linkpeek trial discussion](https://github.com/thegruber/linkpeek/discussions/39#discussioncomment-19046880)
+and Linkwarden [test-coverage proposal](https://github.com/linkwarden/linkwarden/issues/1869)
+are separate proposals; the Linkwarden coverage is limited to the shared fetch
 function. DNS rebinding and TLS are outside these trials. linkpeek's separate
 development-dependency audit failure is recorded with its evidence.
 

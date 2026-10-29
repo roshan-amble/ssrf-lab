@@ -1,0 +1,6 @@
+Allowed entry control: HTTP 200; publicHits=1; internalHits=0
+Unsafe fetch control: REACHED; internalHits=1
+Fetch, then claim a refusal: REACHED; internalHits=1
+Refuse before fetching: BLOCKED; internalHits=0
+Unexplained failure before fetching: PREVENTED; internalHits=0
+PASS: all four verdicts and per-case destination counters matched
