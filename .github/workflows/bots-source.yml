@@ -1,0 +1,78 @@
+name: Bots application fetch trial
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  safe-fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v5
+        with:
+          repository: tehZevo/bots
+          ref: 5aa3d5ed96635663f9fbd91c480a0faf510077ae
+          path: consumer
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: Build the harness and pinned application module
+        run: |
+          mkdir -p verification
+          npm ci --ignore-scripts
+          npm run build
+          node integrations/bots/build-source.mjs consumer > verification/bots-source.json
+          node --check integrations/bots/fetcher.mjs
+          node --check integrations/bots/verify.mjs
+      - name: Measure requests with no external networking
+        run: |
+          sudo env "PATH=$PATH" unshare --net -- bash -euo pipefail -c '
+            ip link set lo up
+            ip address add 93.184.216.34/32 dev lo
+            ip -j address show > verification/network.json
+            ip -j route show table all > verification/routes.json
+            node integrations/bots/verify.mjs > verification/bots.json
+          '
+      - name: Validate measured controls and refusals
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          const r = JSON.parse(readFileSync('verification/bots.json', 'utf8'));
+          assert.equal(r.application.sourceCommit, '5aa3d5ed96635663f9fbd91c480a0faf510077ae');
+          assert.equal(r.mode, 'isolated-address-and-redirect');
+          assert.equal(r.exitCode, 0);
+          assert.equal(r.scan.results.length, 9);
+          assert.equal(r.scan.blocked, 9);
+          assert(r.scan.results.every(row => row.internalHits === 0));
+          const redirects = r.scan.results.filter(row => row.probeId.startsWith('redirect-'));
+          assert.equal(redirects.length, 2);
+          assert(redirects.every(row => row.publicHits === 1));
+          assert.equal(r.scan.positiveControl.status, 200);
+          assert.equal(r.scan.positiveControl.publicHits, 1);
+          assert.equal(r.negativeControl.reached, 2);
+          assert(r.negativeControl.results.every(row => row.internalHits === 1));
+          console.log('9 explicit refusals, zero internal hits, allowed entry passed, both unsafe controls reached.');
+          JS
+      - name: Retain actual evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bots-trial-node${{ matrix.node }}-${{ github.sha }}
+          path: verification/
+          if-no-files-found: warn
+          retention-days: 30
