@@ -36,16 +36,34 @@ try {
   writeFileSync(join(fixtureDir, 'application.mjs'), `
 import { writeFileSync } from 'node:fs'
 export class AddressRefusal extends Error {}
-export function protectedFetch(url, { signal }) {
+export async function protectedFetch(url, { signal }) {
   // This is the consumer test fixture's own policy, outside the harness.
-  if (new URL(url).hostname !== '93.184.216.34') throw new AddressRefusal('local destination')
-  return fetch(url, { signal })
+  for (let hop = 0; hop <= 3; hop += 1) {
+    if (new URL(url).hostname !== '93.184.216.34') throw new AddressRefusal('local destination')
+    const response = await fetch(url, { signal, redirect: 'manual' })
+    const location = response.headers.get('location')
+    if ([301, 302, 303, 307, 308].includes(response.status) && location) {
+      await response.body?.cancel()
+      url = new URL(location, url).href
+      continue
+    }
+    return response
+  }
+  throw new Error('redirect limit exceeded')
 }
 export const classify = error => error instanceof AddressRefusal ? 'forbidden-address' : undefined
 export const cleanup = () => writeFileSync('closed.txt', 'closed')
 `)
   const modules = {
     protected: `export { protectedFetch as fetchUrl, classify as classifyRefusal, cleanup as close } from './application.mjs'`,
+    firstHopOnly: `
+import { AddressRefusal } from './application.mjs'
+export { classify as classifyRefusal } from './application.mjs'
+export const fetchUrl = (url, { signal }) => {
+  if (new URL(url).hostname !== '93.184.216.34') throw new AddressRefusal('local destination')
+  return fetch(url, { signal })
+}
+`,
     unsafe: `export const fetchUrl = (url, { signal }) => fetch(url, { signal })`,
     late: `
 export const fetchUrl = async (url, { signal }) => {
@@ -101,6 +119,9 @@ export const fetchUrl = (url, { signal }) => fetch(url, { signal })
     assert(report.scan.reached > 0)
     assert(report.scan.results.filter(row => row.verdict === 'REACHED').every(row => row.internalHits > 0))
   }
+  const firstHop = check('firstHopOnly', values.isolated ? 1 : 0)
+  assert.equal(firstHop.scan.blocked, 7)
+  assert.equal(firstHop.scan.reached, values.isolated ? 2 : 0)
   const unknown = check('unknown', 2)
   if (values.isolated) assert.match(unknown.error, /unexplained network failure/)
   else {
