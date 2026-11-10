@@ -55,6 +55,20 @@ is excepted. The old `qs` exception and its propagated dependency edge are
 removed from the review snapshot, while the repaired version remains pinned.
 Historical evidence retains its original dependency configuration.
 
+## Patched n8n redirect dependency
+
+The current n8n fixture explicitly pins `follow-redirects@1.16.2` instead of
+the previously locked `1.16.1`. The upstream advisory
+[GHSA-mrwp-f3q8-3g9p](https://github.com/follow-redirects/follow-redirects/security/advisories/GHSA-mrwp-f3q8-3g9p)
+lists `1.16.2` as the fix for cross-realm `sensitiveHeaders` validation.
+The replacement satisfies Axios's existing `^1.16.0` dependency range. The
+n8n component versions remain unchanged, and the repaired transitive version
+is recorded in the review snapshot. No advisory exception was added or
+expanded. The audit gate rejected the old lockfile and accepts the patched
+configuration with its twelve existing research-fixture findings.
+Historical results retain their original dependency configuration. This
+dependency belongs to the optional comparison fixture, not the published CLI.
+
 ## Two package findings, one documented exception
 
 At upgrade verification, `npm audit` reported two high-severity package entries:

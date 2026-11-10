@@ -45,6 +45,8 @@ The n8n fixture also explicitly overrides backend-network's pinned `qs@6.15.2`
 with `qs@6.16.1` to address GHSA-6pq8-jhm2-2vcw. See the
 [query-serializer review](DEPENDENCY_POLICY.md#patched-n8n-query-serializer).
 This is a patched comparison configuration, not an untouched transitive install.
+It also pins `follow-redirects@1.16.2` to repair GHSA-mrwp-f3q8-3g9p; see the
+[redirect dependency review](DEPENDENCY_POLICY.md#patched-n8n-redirect-dependency).
 
 The [additional package group](../integrations/community/README.md) is installed
 separately and has its own scope notes and audit. Its node-safeurl functional
