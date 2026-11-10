@@ -1,6 +1,6 @@
 {
   "name": "ssrf-lab",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Test whether your Node.js fetcher actually blocks SSRF or just got lucky: a local attack range with an independent hit counter, for CI.",
   "keywords": [
     "ssrf",

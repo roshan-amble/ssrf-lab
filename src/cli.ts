@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { parseArgs } from 'node:util'
 import { checkThenConnect } from './adapters/checkThenConnect.js'
 import { guardedFetch } from './adapters/guardedFetch.js'
 import { requestFilteringAgent, ssrfAgentClient, ssrfReqFilter } from './adapters/libraries.js'
@@ -13,6 +14,7 @@ import type { HttpClient } from './adapters/types.js'
 import { DIRECT_PROBES, PROBES, type Probe } from './checker/probes.js'
 import { LEGEND, renderJson, renderTable } from './checker/report.js'
 import { runScan, type ScanResult } from './checker/run.js'
+import { checkFetcher, renderCheckReport } from './checker/custom.js'
 import { startAttackRange } from './range/server.js'
 
 const CLIENTS: Record<string, HttpClient> = {
@@ -46,6 +48,13 @@ const SUITES: Record<string, readonly Probe[]> = {
 
 const USAGE = `ssrf-lab — run a local attack range against an HTTP client
 
+  ssrf-lab check --module <path> [--isolated] [--json]
+
+  --module         import your application's fetchUrl module, relative to cwd
+                   check defaults to a seven-case, direct-only smoke test
+  --isolated       check adds two redirects and an allowed-entry control;
+                   requires the loopback-only Linux namespace described below
+
   ssrf-lab scan [--client <name|all|libs>] [--suite redirect|direct|all]
                 [--json] [--fail-on-reach] [--public-address]
 
@@ -71,10 +80,25 @@ async function main(): Promise<void> {
     return
   }
 
-  const json = argv.includes('--json')
-  const failOnReach = argv.includes('--fail-on-reach')
-  const which = flagValue(argv, '--client') ?? 'all'
-  const suiteName = flagValue(argv, '--suite') ?? 'redirect'
+  const command = argv.shift()
+  if (command === 'check') {
+    await check(argv)
+    return
+  }
+  if (command !== 'scan') {
+    process.stderr.write(`unknown command: ${command}\n${USAGE}`)
+    process.exitCode = 2
+    return
+  }
+  const { values } = parseArgs({ args: argv, options: {
+    client: { type: 'string' }, suite: { type: 'string' },
+    json: { type: 'boolean' }, 'fail-on-reach': { type: 'boolean' },
+    'public-address': { type: 'boolean' },
+  } })
+  const json = values.json
+  const failOnReach = values['fail-on-reach']
+  const which = values.client ?? 'all'
+  const suiteName = values.suite ?? 'redirect'
   const suite = SUITES[suiteName]
   const names = GROUPS[which] ?? [which]
   const selected = names.map((name) => CLIENTS[name])
@@ -98,7 +122,7 @@ async function main(): Promise<void> {
     return
   }
 
-  const range = await startAttackRange({ publicAddress: argv.includes('--public-address') })
+  const range = await startAttackRange({ publicAddress: values['public-address'] ?? false })
   const scans: ScanResult[] = []
 
   try {
@@ -121,14 +145,25 @@ async function main(): Promise<void> {
   if (failOnReach && scans.some((scan) => scan.reached > 0)) process.exitCode = 1
 }
 
-function flagValue(argv: readonly string[], flag: string): string | undefined {
-  const index = argv.indexOf(flag)
-  if (index >= 0) return argv[index + 1]
-  const inline = argv.find((entry) => entry.startsWith(`${flag}=`))
-  return inline?.slice(flag.length + 1)
+async function check(args: string[]): Promise<void> {
+  try {
+    const { values } = parseArgs({ args, options: {
+      module: { type: 'string' }, isolated: { type: 'boolean' }, json: { type: 'boolean' },
+    } })
+    if (!values.module) throw new Error('check requires --module <path> to your application fetcher')
+    const report = await checkFetcher(values.module, { isolated: values.isolated ?? false })
+    process.stdout.write(`${values.json ? JSON.stringify(report, null, 2) : renderCheckReport(report)}\n`)
+    process.exitCode = report.exitCode
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error)
+    if (args.includes('--json')) process.stdout.write(`${JSON.stringify({ exitCode: 2, error: detail })}\n`)
+    process.stderr.write(`Custom-fetcher check could not establish coverage: ${detail}\n`)
+    process.exitCode = 2
+  }
 }
 
 main().catch((error: unknown) => {
   process.stderr.write(`${String(error)}\n`)
-  process.exitCode = 1
+  const code = (error as NodeJS.ErrnoException).code
+  process.exitCode = code?.startsWith('ERR_PARSE_ARGS_') ? 2 : 1
 })

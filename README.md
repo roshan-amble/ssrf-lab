@@ -40,6 +40,27 @@ Star this repository to follow new fixtures and adapters.
 | Run the sample on GitHub, with no local install or secrets | [Create a repository from the starter](https://github.com/roshan-amble/ssrf-lab-starter/generate) and run its Node 22/24 workflow from Actions ([recorded passing and failing runs](https://github.com/roshan-amble/ssrf-lab-starter/tree/main/verification)) |
 | Catch regressions in CI | The [reusable GitHub Action](action/README.md) · [step-by-step tutorial](docs/tutorials/node-fetcher-github-actions.md) · [48-second recording](docs/media/ssrf-lab-walkthrough.mp4) ([raw recording and reports](docs/evidence/2026-10-16-action/README.md)) |
 
+### Test your own fetcher from npm (next release)
+
+The next npm release includes `ssrf-lab check --module ./test/ssrf-fetcher.mjs`.
+It imports your application's existing fetch function, runs seven local
+direct-address cases, and checks the destination counter independently of the
+returned response or error. No repository clone or GitHub Action is required.
+This command is not in the published `0.1.0` package yet; from a source build,
+run:
+
+```bash
+node dist/cli.js check --module /path/to/your-app/test/ssrf-fetcher.mjs --json
+```
+
+Use the [module contract and npm walkthrough](examples/custom-fetcher/README.md#use-the-packaged-cli-next-release)
+to connect the real fetcher. Exit `0` means explicit refusals in the selected
+cases, `1` means an internal request was observed, and `2` means inconclusive
+coverage or a setup failure. The default is a **direct-only smoke test**;
+`--isolated` adds the allowed-entry control and two redirects in a verified
+loopback-only Linux namespace. HTTPS-only and hostname-allowlisted clients may
+need a different fixture; keep their production policy intact.
+
 For HTTPS test development, the [isolated fixture prototype](examples/https-fixture/README.md)
 checks real TLS, independent destination counters and certificate-error controls
 against the lab's reference client. Application adapters are a separate step.

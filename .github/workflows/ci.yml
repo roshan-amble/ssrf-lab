@@ -171,6 +171,7 @@ jobs:
             status=$?
             set -e
             test "$status" -eq 1
+            node scripts/check-package.mjs --isolated > verification/package-check-isolated.json
           '
       - name: Prove the upstream regression fails before the patch and passes after
         run: |
