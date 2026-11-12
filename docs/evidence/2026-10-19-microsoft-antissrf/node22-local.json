@@ -1,0 +1,324 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 17,
+    "passes": 17,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-19T23:06:35.399Z",
+    "end": "2026-10-19T23:06:35.475Z",
+    "duration": 76
+  },
+  "tests": [
+    {
+      "title": "completes an allowed request with the protected agent",
+      "fullTitle": "HTTP agent - counted local requests completes an allowed request with the protected agent",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 17,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "follows an allowed redirect with the protected agent",
+      "fullTitle": "HTTP agent - counted local requests follows an allowed redirect with the protected agent",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 8,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches dotted loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches dotted loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks dotted loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks dotted loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches decimal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches decimal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches octal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches octal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks octal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks octal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches hexadecimal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches hexadecimal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks hexadecimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks hexadecimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches mapped IPv6 loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches mapped IPv6 loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks mapped IPv6 loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks mapped IPv6 loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches 302 redirect to loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches 302 redirect to loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks 302 redirect to loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 302 redirect to loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches 307 redirect to decimal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches 307 redirect to decimal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks 307 redirect to decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 307 redirect to decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "detects reach even when the caller later reports a policy error",
+      "fullTitle": "HTTP agent - counted local requests detects reach even when the caller later reports a policy error",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 6,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ],
+  "pending": [],
+  "failures": [],
+  "passes": [
+    {
+      "title": "completes an allowed request with the protected agent",
+      "fullTitle": "HTTP agent - counted local requests completes an allowed request with the protected agent",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 17,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "follows an allowed redirect with the protected agent",
+      "fullTitle": "HTTP agent - counted local requests follows an allowed redirect with the protected agent",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 8,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches dotted loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches dotted loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks dotted loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks dotted loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches decimal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches decimal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches octal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches octal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks octal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks octal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches hexadecimal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches hexadecimal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks hexadecimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks hexadecimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches mapped IPv6 loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches mapped IPv6 loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks mapped IPv6 loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks mapped IPv6 loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches 302 redirect to loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches 302 redirect to loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks 302 redirect to loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 302 redirect to loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "unsafe control reaches 307 redirect to decimal loopback",
+      "fullTitle": "HTTP agent - counted local requests unsafe control reaches 307 redirect to decimal loopback",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 2,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "blocks 307 redirect to decimal loopback without an internal request",
+      "fullTitle": "HTTP agent - counted local requests blocks 307 redirect to decimal loopback without an internal request",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "detects reach even when the caller later reports a policy error",
+      "fullTitle": "HTTP agent - counted local requests detects reach even when the caller later reports a policy error",
+      "file": "/home/runner/work/ssrf-lab/ssrf-lab/consumer/nodejs/tests/FunctionalTests/LocalHttpAgent.test.ts",
+      "duration": 6,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ]
+}

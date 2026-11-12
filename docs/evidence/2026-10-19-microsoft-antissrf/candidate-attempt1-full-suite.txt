@@ -1,0 +1,470 @@
+
+> @microsoft/antissrf@1.0.0 test
+> mocha --recursive --timeout 15000 --require ts-node/register --no-strip-types "tests/{UnitTests,FunctionalTests}/**/*.test.ts"
+
+
+
+  Axios Defaults tests
+    ✔ Contains denied header
+    ✔ Missing required header
+    ✔ Tries to overwrite lookup
+    Allowed addresses that don't cause redirects
+      ✔ GET https://github.com/ - maxRedirects = 0 (316ms)
+      ✔ GET https://github.com/ - no maxRedirects specified (306ms)
+    Allowed addresses that cause redirects
+      ✔ GET https://google.com/ - maxRedirects = 0 (65ms)
+      ✔ GET https://google.com/ - no maxRedirects (117ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - no maxRedirects (308ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - no maxRedirects (108ms)
+    Denied addresses that don't cause redirects
+      ✔ GET https://apple.com/ - maxRedirects = 0
+      ✔ GET https://apple.com/ - no maxRedirects
+      ✔ GET https://www.facebook.com - maxRedirects = 0 (60ms)
+      ✔ GET https://www.facebook.com - no maxRedirects
+      ✔ GET https://www.bing.com - maxRedirects = 0
+      ✔ GET https://www.bing.com - no maxRedirects
+      ✔ GET https://outlook.live.com - maxRedirects = 0
+      ✔ GET https://outlook.live.com - no maxRedirects
+      ✔ GET https://www.etsy.com - maxRedirects = 0 (91ms)
+      ✔ GET https://www.etsy.com - no maxRedirects
+      ✔ GET https://169.254.169.254/ - maxRedirects = 0
+      ✔ GET https://169.254.169.254/ - no maxRedirects
+    Denied addresses that cause redirects
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - no maxRedirects
+
+  Axios Instance tests
+    ✔ Contains denied header
+    ✔ Tries to overwrite lookup
+    ✔ Uses baseURL (115ms)
+    ✔ Incorrectly uses baseURL (138ms)
+    Allowed addresses that don't cause redirects
+      ✔ GET https://github.com/ - maxRedirects = 0 (307ms)
+      ✔ GET https://github.com/ - no maxRedirects specified (307ms)
+    Allowed addresses that cause redirects
+      ✔ GET https://google.com/ - maxRedirects = 0 (87ms)
+      ✔ GET https://google.com/ - no maxRedirects (118ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - no maxRedirects (309ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - no maxRedirects (114ms)
+    Denied addresses that don't cause redirects
+      ✔ GET https://apple.com/ - maxRedirects = 0
+      ✔ GET https://apple.com/ - no maxRedirects
+      ✔ GET https://www.facebook.com - maxRedirects = 0
+      ✔ GET https://www.facebook.com - no maxRedirects
+      ✔ GET https://www.bing.com - maxRedirects = 0
+      ✔ GET https://www.bing.com - no maxRedirects
+      ✔ GET https://outlook.live.com - maxRedirects = 0
+      ✔ GET https://outlook.live.com - no maxRedirects
+      ✔ GET https://www.etsy.com - maxRedirects = 0
+      ✔ GET https://www.etsy.com - no maxRedirects
+      ✔ GET https://169.254.169.254/ - maxRedirects = 0
+      ✔ GET https://169.254.169.254/ - no maxRedirects
+    Denied addresses that cause redirects
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - no maxRedirects
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - maxRedirects = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - no maxRedirects
+
+  Follow-Redirects Library Tests
+    Redirect proxy
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ (463ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ (115ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://portal.azure.com/
+      ✔ GET http://localhost:3000/?redirectTo=http://localhost:3000/?redirectTo=https://google.com/ (116ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/
+      ✔ GET http://localhost:3000/?redirectTo=https://cmu.edu/ (195ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com/
+
+  HttpAgent Tests - default policy
+    ✔ Successful lookup - get, URL (67ms)
+    ✔ Successful lookup - get, options
+    ✔ Successful lookup - request, URL (232ms)
+    ✔ Successful lookup - request, options (55ms)
+    ✔ Reject lookup - get, URL
+    ✔ Reject lookup - get, options
+    ✔ Reject lookup - request, URL
+    ✔ Reject lookup - request, options (173ms)
+    ✔ Successful lookup - any, ensure XFF is added
+    ✔ Successful lookup - any, ensure XFF is not overwritten
+    ✔ Reject lookup - tried to add lookup to request
+
+  HttpAgent Tests - custom policy
+    ✔ Successful lookup - get, URL (152ms)
+    ✔ Successful lookup - get, options (104ms)
+    ✔ Successful lookup - request, URL (473ms)
+    ✔ Successful lookup - request, options
+    ✔ Reject lookup - get, URL
+    ✔ Reject lookup - get, options
+    ✔ Reject lookup - request, options
+    ✔ Reject lookup - any, missing required header
+    ✔ Reject lookup - any, include denied header
+    ✔ Reject lookup - any, tried to overwrite lookup
+    ✔ Bad agent construction
+
+  HttpsAgent Tests - default policy
+    ✔ Successful lookup - get, URL (106ms)
+    ✔ Successful lookup - get, options
+    ✔ Successful lookup - request, URL (87ms)
+    ✔ Successful lookup - request, options (62ms)
+    ✔ Reject lookup - get, URL
+    ✔ Reject lookup - get, options
+    ✔ Reject lookup - request, URL
+    ✔ Reject lookup - request, options (120ms)
+    ✔ Successful lookup - any, ensure XFF is added (111ms)
+    ✔ Successful lookup - any, ensure XFF is not overwritten (153ms)
+    ✔ Reject lookup - tried to add lookup to request
+
+  HttpsAgent Tests - custom policy
+    ✔ Successful lookup - get, URL (99ms)
+    ✔ Successful lookup - get, options (454ms)
+    ✔ Successful lookup - request, URL (536ms)
+    ✔ Successful lookup - request, options (120ms)
+    ✔ Reject lookup - get, URL
+    ✔ Reject lookup - get, options
+    ✔ Reject lookup - request, options
+    ✔ Reject lookup - any, missing required header
+    ✔ Reject lookup - any, include denied header
+    ✔ Reject lookup - any, tried to overwrite lookup
+    ✔ Bad agent construction
+
+  HttpsAgent Tests - other methods
+    ✔ GET allowed (269ms)
+    1) GET disallowed
+    ✔ POST allowed (241ms)
+    2) POST disallowed
+    ✔ PUT allowed (240ms)
+    3) PUT disallowed
+    ✔ DELETE allowed (238ms)
+    4) DELETE disallowed
+    ✔ HEAD allowed (250ms)
+    5) HEAD disallowed
+    ✔ PATCH allowed (236ms)
+    6) PATCH disallowed
+    ✔ OPTIONS allowed (238ms)
+    7) OPTIONS disallowed
+
+  HttpsAgent Tests - certificates
+    Valid Certificate Tests
+      ✔ Valid certificate should succeed (57ms)
+    Expired Certificate Tests
+      ✔ Expired certificate should fail with certificate verification enabled (220ms)
+      ✔ Expired certificate should succeed with certificate verification disabled (276ms)
+    Wrong Host Certificate Tests
+      ✔ Wrong host certificate should fail with certificate verification enabled (188ms)
+      ✔ Wrong host certificate should succeed with certificate verification disabled (266ms)
+    Self-Signed Certificate Tests
+      ✔ Self-signed certificate should fail with certificate verification enabled (218ms)
+      ✔ Self-signed certificate should succeed with certificate verification disabled (268ms)
+    Untrusted Root Certificate Tests
+      ✔ Untrusted root certificate should fail with certificate verification enabled (272ms)
+      ✔ Untrusted root certificate should succeed with certificate verification disabled (239ms)
+
+  HTTP agent - counted local requests
+    ✔ completes an allowed request with the protected agent
+    ✔ follows an allowed redirect with the protected agent
+    ✔ unsafe control reaches dotted loopback
+    ✔ blocks dotted loopback without an internal request
+    ✔ unsafe control reaches decimal loopback
+    ✔ blocks decimal loopback without an internal request
+    ✔ unsafe control reaches octal loopback
+    ✔ blocks octal loopback without an internal request
+    ✔ unsafe control reaches hexadecimal loopback
+    ✔ blocks hexadecimal loopback without an internal request
+    ✔ unsafe control reaches mapped IPv6 loopback
+    ✔ blocks mapped IPv6 loopback without an internal request
+    ✔ unsafe control reaches 302 redirect to loopback
+    ✔ blocks 302 redirect to loopback without an internal request
+    ✔ unsafe control reaches 307 redirect to decimal loopback
+    ✔ blocks 307 redirect to decimal loopback without an internal request
+    ✔ detects reach even when the caller later reports a policy error
+
+  Node-Fetch Tests
+    Allowed addresses that don't cause redirects
+      ✔ GET https://github.com/ - follow = 0 (158ms)
+      ✔ GET https://github.com/ - redirect = "manual" (157ms)
+      ✔ GET https://github.com/ - redirect = "follow" (158ms)
+      ✔ GET https://github.com/ - redirect = "error" (157ms)
+    Allowed addresses that cause redirects
+      ✔ GET https://google.com/ - follow = 0 (59ms)
+      ✔ GET https://google.com/ - redirect = "manual" (50ms)
+      ✔ GET https://google.com/ - redirect = "follow" (106ms)
+      ✔ GET https://google.com/ - redirect = "error" (51ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - redirect = "follow" (165ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://github.com/ - redirect = "error"
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - redirect = "follow" (107ms)
+      ✔ GET http://localhost:3000/?redirectTo=https://google.com/ - redirect = "error"
+    Denied addresses that don't cause redirects
+      ✔ GET https://apple.com/ - follow = 0
+      ✔ GET https://apple.com/ - redirect = "manual"
+      ✔ GET https://apple.com/ - redirect = "follow"
+      ✔ GET https://apple.com/ - redirect = "error"
+      ✔ GET https://www.facebook.com - follow = 0
+      ✔ GET https://www.facebook.com - redirect = "manual"
+      ✔ GET https://www.facebook.com - redirect = "follow"
+      ✔ GET https://www.facebook.com - redirect = "error"
+      ✔ GET https://www.bing.com - follow = 0
+      ✔ GET https://www.bing.com - redirect = "manual"
+      ✔ GET https://www.bing.com - redirect = "follow"
+      ✔ GET https://www.bing.com - redirect = "error"
+      ✔ GET https://outlook.live.com - follow = 0
+      ✔ GET https://outlook.live.com - redirect = "manual"
+      ✔ GET https://outlook.live.com - redirect = "follow"
+      ✔ GET https://outlook.live.com - redirect = "error"
+      ✔ GET https://www.etsy.com - follow = 0
+      ✔ GET https://www.etsy.com - redirect = "manual"
+      ✔ GET https://www.etsy.com - redirect = "follow"
+      ✔ GET https://www.etsy.com - redirect = "error"
+      ✔ GET https://169.254.169.254/ - follow = 0
+      ✔ GET https://169.254.169.254/ - redirect = "manual"
+      ✔ GET https://169.254.169.254/ - redirect = "follow"
+      ✔ GET https://169.254.169.254/ - redirect = "error"
+    Denied addresses that cause redirects
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - redirect = "follow"
+      ✔ GET http://localhost:3000/?redirectTo=https://apple.com/ - redirect = "error"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - redirect = "follow"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.facebook.com - redirect = "error"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - redirect = "follow"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.bing.com - redirect = "error"
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - redirect = "follow"
+      ✔ GET http://localhost:3000/?redirectTo=https://outlook.live.com - redirect = "error"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - redirect = "follow"
+      ✔ GET http://localhost:3000/?redirectTo=https://www.etsy.com - redirect = "error"
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - follow = 0
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - redirect = "manual"
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - redirect = "follow"
+      ✔ GET http://localhost:3000/?redirectTo=https://169.254.169.254/ - redirect = "error"
+    Header policy enforcement
+      ✔ Contains denied header
+      ✔ Missing required header
+
+  AntiSSRFDnsLookup
+    ✔ Lookup options - order
+    ✔ Lookup options - verbatim
+    ✔ Lookup options - family
+    ✔ Lookup options - all
+    Bad inputs
+(node:2291) [DEP0118] DeprecationWarning: The provided hostname "null" is not a valid hostname, and is supported in the dns module solely for compatibility.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+      ✔ Null hostname
+      ✔ Undefined hostname
+      ✔ Generally bad hostname
+      ✔ Bad options
+    Lookup with accepting policy
+      ✔ Common domain tests - google.com
+Address mismatch (family match): hostname - bing.com, expected address - 150.171.27.10, actual address - 150.171.28.10, family - 4, options - {hints: 16}
+Address mismatch (family match): hostname - bing.com, expected address - 150.171.27.10, actual address - 150.171.28.10, family - 4, options - {hints: 32}
+Address mismatch (family match): hostname - bing.com, expected address - 150.171.27.10, actual address - 150.171.28.10, family - 4, options - {hints: 24}
+Address mismatch (family match): hostname - bing.com, expected address - 150.171.27.10, actual address - 150.171.28.10, family - 4, options - {hints: 40}
+      ✔ Common domain tests - bing.com
+      ✔ Common domain tests - learn.microsoft.com
+Address mismatch (family match): hostname - azure.com, expected address - 20.76.201.171, actual address - 20.70.246.20, family - 4, options - {hints: 8}
+Address mismatch (family match): hostname - azure.com, expected address - 20.70.246.20, actual address - 20.112.250.133, family - 4, options - {hints: 16}
+Address mismatch (family match): hostname - azure.com, expected address - 20.231.239.246, actual address - 20.112.250.133, family - 4, options - {hints: 32}
+Address mismatch (family match): hostname - azure.com, expected address - 20.236.44.162, actual address - 20.70.246.20, family - 4, options - {hints: 24}
+Address mismatch (family match): hostname - azure.com, expected address - 20.70.246.20, actual address - 20.236.44.162, family - 4, options - {hints: 40}
+Address mismatch (family match): hostname - azure.com, expected address - 20.231.239.246, actual address - 20.112.250.133, family - 4, options - {hints: 48}
+Address mismatch (family match): hostname - azure.com, expected address - 20.236.44.162, actual address - 20.70.246.20, family - 4, options - {hints: 56}
+      ✔ Common domain tests - azure.com (46ms)
+      ✔ Common domain tests - github.com
+    Lookup with policy functionality
+Address mismatch (family match): hostname - yAhOo.com, expected address - 74.6.231.20, actual address - 74.6.143.26, family - 4, options - {family: 4, all: false}
+Address mismatch (family match): hostname - bing.com, expected address - 150.171.27.10, actual address - 150.171.28.10, family - 4, options - {family: 4}
+      ✔ Default policy (109ms)
+      ✔ addAllowedAddresses
+      ✔ addDeniedAddresses
+
+  AntiSSRFPolicy Address Tests
+    ✔ bad inputs
+    ✔ check defaults IMDS (2568ms)
+    ✔ check defaults wireserver (494ms)
+    ✔ check defaults localhost (501ms)
+    ✔ default with IpAddressRanges
+    ✔ allow IPv4 addresses (155ms)
+    ✔ allow IPv4-mapped IPv6 addresses (153ms)
+    ✔ allow IPv6 addresses
+    ✔ deny IPv4 address (344ms)
+    ✔ deny IPv4-mapped IPv6 address (311ms)
+    ✔ deny IPv6 address (307ms)
+    ✔ both allow and deny (176ms)
+    direct IPs - wireserver
+      ✔ defaults
+      ✔ explicit deny
+      ✔ explicit allow
+    direct IPs - IMDS
+      ✔ defaults
+      ✔ explicit deny
+      ✔ explicit allow
+
+  AntiSSRFPolicy AddXFFHeader Tests
+    ✔ check defaults
+    ✔ on true (242ms)
+    ✔ does not overwrite header (248ms)
+
+  AntiSSRFPolicy Header Tests
+    ✔ bad inputs
+    ✔ check defaults
+    ✔ required header (241ms)
+    ✔ denied header (252ms)
+    ✔ both required and denied
+    ✔ with XFF header (245ms)
+    ✔ holds on redirect (724ms)
+    ✔ case insensitive headers (245ms)
+
+  AntiSSRFPolicy Scheme Tests
+    ✔ check defaults
+    ✔ on true (426ms)
+    ✔ on false (172ms)
+    ✔ rejects non-http schemes
+
+  CIDRBlock Tests
+    ✔ bad inputs
+    ✔ contains ipv4 returns expected result
+    ✔ contains ipv6 returns expected result
+    ✔ contains ipv6 with scope returns expected result
+
+  InAzureKeyVaultDomain Tests
+    ✔ should return false for null and empty inputs
+    ✔ accepts URLs in key vault domains
+    ✔ supports private link key vault domains
+    ✔ rejects URLs not in key vault domains
+    ✔ correctly parses various URL components
+    ✔ correctly rejects unicode
+    ✔ correctly handles upper/lowercase
+    ✔ correctly enforces allowed protocols
+
+  InAzureStorageDomain Tests
+    ✔ should return false for null and empty inputs
+    ✔ accepts URLs in storage domains
+    ✔ supports secondary storage endpoints
+    ✔ supports private link storage domains
+    ✔ supports static sites and DNS zones
+    ✔ rejects URLs not in storage domains
+    ✔ correctly parses various URL components
+    ✔ correctly rejects unicode
+    ✔ correctly handles upper/lowercase
+    ✔ correctly enforces allowed protocols
+
+  InDomain Tests
+    ✔ should return false for null and empty inputs
+    ✔ accepts URLs in trusted single domains
+    ✔ accepts URLs in trusted domain arrays
+    ✔ rejects URLs not in trusted single domains
+    ✔ rejects URLs not in trusted domain arrays
+    ✔ correctly parses various URL components
+    ✔ correctly rejects invalid URL components
+    ✔ correctly handles unicode in single domains
+    ✔ correctly handles unicode in domain arrays
+    ✔ correctly rejects invalid unicode single domains
+    ✔ correctly rejects invalid unicode domain arrays
+    ✔ correctly rejects invalid unicode strings
+    ✔ correctly handles upper/lowercase
+    ✔ correctly handles upper/lowercase in domain arrays
+    ✔ correctly enforces allowed protocols
+    ✔ correctly rejects disallowed protocols
+    ✔ correctly rejects file path strings
+
+
+  309 passing (22s)
+  7 failing
+
+  1) HttpsAgent Tests - other methods
+       GET disallowed:
+     Error: done() invoked with non-Error: Expected error, but got response
+      at IncomingMessage.<anonymous> (tests/FunctionalTests/HttpsAgent.test.ts:521:21)
+      at IncomingMessage.emit (node:events:526:24)
+      at IncomingMessage.emit (node:domain:489:12)
+      at endReadableNT (node:internal/streams/readable:1764:12)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+  2) HttpsAgent Tests - other methods
+       POST disallowed:
+     Error: done() invoked with non-Error: Expected error, but got response
+      at IncomingMessage.<anonymous> (tests/FunctionalTests/HttpsAgent.test.ts:521:21)
+      at IncomingMessage.emit (node:events:526:24)
+      at IncomingMessage.emit (node:domain:489:12)
+      at endReadableNT (node:internal/streams/readable:1764:12)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+  3) HttpsAgent Tests - other methods
+       PUT disallowed:
+     Error: done() invoked with non-Error: Expected error, but got response
+      at IncomingMessage.<anonymous> (tests/FunctionalTests/HttpsAgent.test.ts:521:21)
+      at IncomingMessage.emit (node:events:526:24)
+      at IncomingMessage.emit (node:domain:489:12)
+      at endReadableNT (node:internal/streams/readable:1764:12)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+  4) HttpsAgent Tests - other methods
+       DELETE disallowed:
+     Error: done() invoked with non-Error: Expected error, but got response
+      at IncomingMessage.<anonymous> (tests/FunctionalTests/HttpsAgent.test.ts:521:21)
+      at IncomingMessage.emit (node:events:526:24)
+      at IncomingMessage.emit (node:domain:489:12)
+      at endReadableNT (node:internal/streams/readable:1764:12)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+  5) HttpsAgent Tests - other methods
+       HEAD disallowed:
+     Error: done() invoked with non-Error: Expected error, but got response
+      at IncomingMessage.<anonymous> (tests/FunctionalTests/HttpsAgent.test.ts:521:21)
+      at IncomingMessage.emit (node:events:526:24)
+      at IncomingMessage.emit (node:domain:489:12)
+      at endReadableNT (node:internal/streams/readable:1764:12)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+  6) HttpsAgent Tests - other methods
+       PATCH disallowed:
+     Error: done() invoked with non-Error: Expected error, but got response
+      at IncomingMessage.<anonymous> (tests/FunctionalTests/HttpsAgent.test.ts:521:21)
+      at IncomingMessage.emit (node:events:526:24)
+      at IncomingMessage.emit (node:domain:489:12)
+      at endReadableNT (node:internal/streams/readable:1764:12)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+  7) HttpsAgent Tests - other methods
+       OPTIONS disallowed:
+     Error: done() invoked with non-Error: Expected error, but got response
+      at IncomingMessage.<anonymous> (tests/FunctionalTests/HttpsAgent.test.ts:521:21)
+      at IncomingMessage.emit (node:events:526:24)
+      at IncomingMessage.emit (node:domain:489:12)
+      at endReadableNT (node:internal/streams/readable:1764:12)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21)
+
+
+

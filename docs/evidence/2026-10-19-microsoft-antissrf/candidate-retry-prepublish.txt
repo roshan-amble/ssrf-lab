@@ -1,0 +1,15 @@
+
+> @microsoft/antissrf@1.0.0 test:prepublish
+> mocha --recursive --timeout 15000 tests/PrePublishTests/**/*.test.js
+
+
+
+  Tests for most recent .tgz package
+    ✔ URIValidator.inDomain test
+    AntiSSRFPolicy tests
+      ✔ Allow valid IP (73ms)
+      ✔ Deny blocked IP
+
+
+  3 passing (105ms)
+

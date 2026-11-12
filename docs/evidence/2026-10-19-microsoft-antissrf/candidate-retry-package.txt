@@ -1,0 +1,38 @@
+npm notice
+npm notice 📦  @microsoft/antissrf@1.0.0
+npm notice Tarball Contents
+npm notice 818B CHANGELOG.md
+npm notice 1.1kB LICENSE
+npm notice 3.5kB README.md
+npm notice 53B out/src/AntiSSRFError.d.ts
+npm notice 261B out/src/AntiSSRFError.js
+npm notice 4.7kB out/src/AntiSSRFPolicy.d.ts
+npm notice 11.2kB out/src/AntiSSRFPolicy.js
+npm notice 256B out/src/Helpers/AntiSSRFDnsLookup.d.ts
+npm notice 3.5kB out/src/Helpers/AntiSSRFDnsLookup.js
+npm notice 1.9kB out/src/Helpers/AntiSSRFHttpAgent.d.ts
+npm notice 5.0kB out/src/Helpers/AntiSSRFHttpAgent.js
+npm notice 1.9kB out/src/Helpers/AntiSSRFHttpsAgent.d.ts
+npm notice 4.5kB out/src/Helpers/AntiSSRFHttpsAgent.js
+npm notice 1.3kB out/src/Helpers/CIDRBlock.d.ts
+npm notice 4.5kB out/src/Helpers/CIDRBlock.js
+npm notice 347B out/src/Helpers/Domains.d.ts
+npm notice 1.5kB out/src/Helpers/Domains.js
+npm notice 134B out/src/index.d.ts
+npm notice 1.0kB out/src/index.js
+npm notice 1.4kB out/src/IPAddressRanges.d.ts
+npm notice 2.5kB out/src/IPAddressRanges.js
+npm notice 1.2kB out/src/URIValidator.d.ts
+npm notice 4.6kB out/src/URIValidator.js
+npm notice 2.1kB package.json
+npm notice Tarball Details
+npm notice name: @microsoft/antissrf
+npm notice version: 1.0.0
+npm notice filename: microsoft-antissrf-1.0.0.tgz
+npm notice package size: 13.5 kB
+npm notice unpacked size: 59.3 kB
+npm notice shasum: a76c2d257bddcf6027490b64b0b66b074cd6934c
+npm notice integrity: sha512-dQkpjCmvqAybR[...]+pFjndxEKDuXw==
+npm notice total files: 24
+npm notice
+microsoft-antissrf-1.0.0.tgz

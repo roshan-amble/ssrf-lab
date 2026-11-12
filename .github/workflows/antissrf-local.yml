@@ -1,0 +1,134 @@
+name: AntiSSRF local contribution verification
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22', '24', '25']
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: roshan-amble/AntiSSRF
+          ref: 0426cc35d9b28615810414c819cc2323740a0a4e
+          path: consumer
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: consumer/nodejs/package-lock.json
+      - name: Build and check the candidate
+        working-directory: consumer/nodejs
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+          npm run lint
+          ./node_modules/.bin/prettier --check tests/FunctionalTests/LocalHttpAgent.test.ts
+      - name: Run the new tests and guard-removal control without external networking
+        run: |
+          mkdir -p verification
+          node -p 'JSON.stringify({node:process.version,platform:process.platform,source:"0426cc35d9b28615810414c819cc2323740a0a4e"})' > verification/environment.json
+          sudo env "PATH=$PATH" unshare --net -- bash -euo pipefail -c '
+            ip link set lo up
+            cd consumer/nodejs
+            test_file=tests/FunctionalTests/LocalHttpAgent.test.ts
+            ./node_modules/.bin/mocha --require ts-node/register --no-strip-types --timeout 15000 "$test_file" --reporter json > ../../verification/local.json
+            cp "$test_file" ../../verification/original-test.ts
+            trap '\''cp ../../verification/original-test.ts "$test_file"'\'' EXIT
+            python3 - <<'\''PY'\''
+          from pathlib import Path
+          p = Path("tests/FunctionalTests/LocalHttpAgent.test.ts")
+          source = p.read_text()
+          protected = "protectedAgent = policy.getHttpAgent({ keepAlive: false });"
+          assert source.count(protected) == 1
+          p.write_text(source.replace(protected, "protectedAgent = new Agent({ keepAlive: false });"))
+          PY
+            set +e
+            ./node_modules/.bin/mocha --require ts-node/register --no-strip-types --timeout 15000 "$test_file" --grep "blocks .*without an internal request" --reporter json > ../../verification/guard-removal.json
+            mutation_exit=$?
+            set -e
+            test "$mutation_exit" -eq 7
+          '
+      - name: Validate the measured controls
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { readFileSync } from 'node:fs';
+          const passing = JSON.parse(readFileSync('verification/local.json', 'utf8'));
+          const mutation = JSON.parse(readFileSync('verification/guard-removal.json', 'utf8'));
+          assert.equal(passing.stats.tests, 17);
+          assert.equal(passing.stats.passes, 17);
+          assert.equal(passing.stats.failures, 0);
+          assert.equal(mutation.stats.tests, 7);
+          assert.equal(mutation.stats.failures, 7);
+          assert(mutation.failures.every(row => row.err.message.includes('The internal fixture recorded a request')));
+          console.log('17 local checks passed; removing the guard failed all 7 refusal checks.');
+          JS
+      - name: Preserve the reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: antissrf-offline-node${{ matrix.node }}-${{ github.sha }}
+          path: verification/
+          retention-days: 30
+
+  upstream-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: baseline
+            repository: microsoft/AntiSSRF
+            ref: 55d49acd9028e1190f665962d1b87d76993b2dd8
+          - label: candidate
+            repository: roshan-amble/AntiSSRF
+            ref: 0426cc35d9b28615810414c819cc2323740a0a4e
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.ref }}
+          path: consumer
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: consumer/nodejs/package-lock.json
+      - name: Build and lint
+        working-directory: consumer/nodejs
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+          npm run lint
+      - name: Run the complete unchanged upstream test command
+        working-directory: consumer/nodejs
+        run: |
+          mkdir -p ../../verification
+          set -o pipefail
+          npm test 2>&1 | tee ../../verification/full-suite.log
+      - name: Run the existing package checks
+        working-directory: consumer/nodejs
+        run: |
+          set -o pipefail
+          npm pack 2>&1 | tee ../../verification/package.log
+          npm run test:prepublish 2>&1 | tee ../../verification/prepublish.log
+      - name: Preserve the full-suite logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: antissrf-full-${{ matrix.label }}-${{ github.sha }}
+          path: verification/
+          retention-days: 30
