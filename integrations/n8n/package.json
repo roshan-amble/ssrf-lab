@@ -10,6 +10,7 @@
   "overrides": {
     "@n8n/backend-network@1.17.3": {
       "qs": "6.16.1"
-    }
+    },
+    "follow-redirects": "1.16.2"
   }
 }

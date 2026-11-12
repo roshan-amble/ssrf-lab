@@ -93,6 +93,13 @@ jobs:
           NODE
           npm ls --depth=0 2>&1 | tee verification/versions.txt
           echo 'FUNCTIONAL CHECKS AND AUDIT GATE PASSED; TWO RESEARCH-FIXTURE FINDINGS ARE EXCEPTED' | tee verification/RESULTS.txt
+      - name: Verify the npm artifact from a separate isolated consumer
+        run: |
+          sudo env "PATH=$PATH" unshare --net -- bash -euo pipefail -c '
+            ip link set lo up
+            ip address add 93.184.216.34/32 dev lo
+            node scripts/check-package.mjs --isolated > verification/package-check-isolated.json
+          '
       - name: Preserve actual verification output
         if: always()
         uses: actions/upload-artifact@v4
